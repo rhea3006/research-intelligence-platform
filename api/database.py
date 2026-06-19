@@ -31,11 +31,17 @@ def get_paper_by_id(arxiv_id):
 
     return paper
 
-def search_papers(q, limit, offset):
+def search_papers(q, limit, offset, category= None, author= None, year= None):
     conn= get_connection()
     cursor=conn.cursor()
 
-    cursor.execute("""Select arxiv_id, title, authors, published_date, 
+    search_term = f"%{q}%"
+    params = [search_term] * 8
+    params.extend([limit, offset])
+
+    filters=[]
+
+    query="""Select arxiv_id, title, authors, published_date, 
                    (CASE
                         WHEN title ILIKE %s THEN 4
                         ELSE 0
@@ -54,16 +60,34 @@ def search_papers(q, limit, offset):
                    CASE
                         WHEN authors ILIKE %s THEN 1
                         ELSE 0 
-                   END) AS relevance_score from papers WHERE 
-                   title ILIKE %s OR abstract ILIKE %s OR authors ILIKE %s 
-                   OR categories ILIKE %s 
+                   END) AS relevance_score from papers 
+                   WHERE (title ILIKE %s OR abstract ILIKE %s OR authors ILIKE %s 
+                   OR categories ILIKE %s )
                    ORDER BY relevance_score DESC
                    LIMIT %s
-                   OFFSET %s""",
-                   (f"%{q}%",f"%{q}%",f"%{q}%",f"%{q}%",f"%{q}%",f"%{q}%", f"%{q}%",f"%{q}%",
-                    limit,offset))
+                   OFFSET %s"""
     
+    
+    if category:
+        filters.append("categories ILIKE %s")
+        params.insert(-2, f"%{category}%")
+    
+    if author:
+        filters.append("authors ILIKE %s")
+        params.insert(-2, f"%{author}%")
+
+    if year:
+        filters.append("EXTRACT(YEAR FROM published_date) = %s")
+        params.insert(-2, year)
+
+    if filters:
+        query = query.replace("ORDER BY relevance_score DESC",
+                               f"AND {' AND '.join(filters)} ORDER BY relevance_score DESC")
+
+    cursor.execute(query, params)
     results=cursor.fetchall()
+    cursor.close()
+    conn.close()
 
     return results
 
@@ -106,7 +130,7 @@ def get_related_papers(arxiv_id):
     print(score_clause)
     print(where_clause)
     print(all_params)
-    
+
     cursor.execute(f"""SELECT arxiv_id, title, authors, published_date,
                    ({score_clause}) AS similarity_score FROM papers WHERE ({where_clause})
                    AND arxiv_id != %s ORDER BY similarity_score DESC LIMIT 10""", all_params)

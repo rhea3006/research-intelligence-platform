@@ -13,6 +13,7 @@ class PaperDetail(BaseModel):
     categories: str | None = None
     arxiv_url: str | None = None
     published_date: str | None = None
+    updated_date: date | None = None
 
 class SearchResult(BaseModel):
     arxiv_id: str
@@ -27,3 +28,7 @@ class RelatedPaper(BaseModel):
     authors: str | None = None
     published_date: date | None = None
     similarity_score: int
+
+class PaperWithRelated(BaseModel):
+    paper : PaperDetail
+    related_papers: list[RelatedPaper]

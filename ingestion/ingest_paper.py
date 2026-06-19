@@ -1,6 +1,8 @@
 import requests
 import feedparser
 import psycopg2
+from insert_paper import get_connection
+
 
 def fetch_papers(query, max_results):
     url = "https://export.arxiv.org/api/query"
@@ -16,12 +18,14 @@ def extract_paper_data(paper):
             "authors":", ".join(author.name for author in paper.authors),
             "categories":", ".join(tag.term for tag in paper.tags),
             "arxiv_url":next((link.href for link in paper.links if "pdf" in link.href),None),
-            "published_date":paper.published[:10]
+            "published_date":paper.published[:10],"updated_date":paper.updated[:10]
             }
 
+
 def save_paper(cursor, paper_data):
-    cursor.execute("""INSERT INTO papers(arxiv_id, title, abstract, authors, categories, arxiv_url, published_date)
-        VALUES (%s,%s,%s,%s,%s,%s,%s)
+    cursor.execute("""INSERT INTO papers(arxiv_id, title, abstract, authors, categories, 
+        arxiv_url, published_date, updated_date)
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
         ON CONFLICT (arxiv_id)
         DO NOTHING""",
         (
@@ -31,16 +35,20 @@ def save_paper(cursor, paper_data):
             paper_data["authors"],
             paper_data["categories"],
             paper_data["arxiv_url"],
-            paper_data["published_date"]
+            paper_data["published_date"],
+            paper_data["updated_date"]
         )
     )
+    print(paper_data["updated_date"])
 
 def main():
-    conn = psycopg2.connect(dbname="research_intelligence",user="rheamathur",host="localhost")
+    conn = get_connection()
     cursor = conn.cursor()
     papers = fetch_papers( query="all:machine learning", max_results=10)
     for paper in papers:
         paper_data = extract_paper_data(paper)
+        print(paper_data)
+        break
         save_paper(cursor,paper_data)
         
         print(f"Processed: {paper_data['title']}")

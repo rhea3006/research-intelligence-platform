@@ -3,6 +3,7 @@ from api.models import PaperSummary
 from api.models import PaperDetail
 from api.models import SearchResult
 from api.models import RelatedPaper
+from api.models import PaperWithRelated
 from api.database import get_connection
 from api.database import get_all_papers
 from api.database import get_paper_by_id
@@ -28,20 +29,32 @@ def get_papers(page: int = 1,limit: int = 10):
 
     return papers
 
-@app.get("/papers/{arxiv_id}",response_model=PaperDetail)
+@app.get("/papers/{arxiv_id}",response_model=PaperWithRelated)
 def get_paper(arxiv_id):
 
     paper=get_paper_by_id(arxiv_id)
     
-    return {"arxiv_id": paper[1],"title": paper[2],"abstract": paper[3],
+    paper_data= {"arxiv_id": paper[1],"title": paper[2],"abstract": paper[3],
             "published_date": str(paper[4]) if paper[4] else None,
-            "authors":paper[5], "categories":paper[6],"arxiv_url": paper[7],}
+            "authors":paper[5], "categories":paper[6],"arxiv_url": paper[7],
+            "updated_date": paper[8]}
+    
+    related= get_related_papers(arxiv_id)
+    related_papers = []
+
+    for row in related:
+        related_papers.append({"arxiv_id": row[0], "title": row[1], "authors": row[2],
+            "published_date": row[3],"similarity_score": row[4]})
+
+    return {"paper": paper_data, "related_papers": related_papers}
 
 @app.get("/search", response_model=list[SearchResult])
-def search(q: str,page: int=1, limit: int=10):
+def search(q: str, category: str | None = None, author: str | None = None ,year: int | None = None
+           ,page: int=1, limit: int=10):
+    
     offset= (page - 1)* limit
     
-    results= search_papers(q,limit, offset)
+    results= search_papers(q,limit, offset, category, author,year)
     papers=[]
     for row in results:
         papers.append({"arxiv_id":row[0], "title": row[1],"authors": row[2],
