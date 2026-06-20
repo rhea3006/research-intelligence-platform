@@ -9,7 +9,7 @@ response= requests.get(url,params=params)
 feed= feedparser.parse(response.text)
 paper= feed.entries[0]
 
-print("TITLE:")
+'''print("TITLE:")
 print(paper.title)
 
 print("\nABSTRACT:")
@@ -19,9 +19,14 @@ print("\nPUBLISHED:")
 print(paper.published)
 
 print("\nARXIV URL:")
-print(paper.id)
+print(paper.id)'''
 
 papers = fetch_papers(
-    query="id:2306.04338v1",
-    max_results=1
+    query="all:machine learning",
+    max_results=5
 )
+
+for paper in papers:
+    print(paper.title)
+    print(paper.published)
+    print("-" * 50)

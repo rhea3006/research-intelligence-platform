@@ -6,7 +6,8 @@ from insert_paper import get_connection
 
 def fetch_papers(query, max_results):
     url = "https://export.arxiv.org/api/query"
-    params = {"search_query": query,"start": 0,"max_results": max_results}
+    params = {"search_query": query,"start": 0,"max_results": max_results,
+              "sortBy": "submittedDate", "sortOrder": "descending"}
     response = requests.get(url, params=params)
     feed = feedparser.parse(response.text)
     return feed.entries
@@ -39,21 +40,32 @@ def save_paper(cursor, paper_data):
             paper_data["updated_date"]
         )
     )
-    print(paper_data["updated_date"])
+    return cursor.rowcount
 
 def main():
     conn = get_connection()
     cursor = conn.cursor()
-    papers = fetch_papers( query="all:machine learning", max_results=10)
+    papers = fetch_papers( query="all:machine learning", max_results=50)
+    inserted_count = 0
+    skipped_count = 0
+
     for paper in papers:
         paper_data = extract_paper_data(paper)
-        print(paper_data)
-        break
-        save_paper(cursor,paper_data)
-        
-        print(f"Processed: {paper_data['title']}")
+        inserted = save_paper(cursor, paper_data)
+        if inserted:
+            print(f"Inserted: {paper_data['title']}")
+        else:
+            print(f"Skipped: {paper_data['title']}")
+        if inserted:
+            inserted_count += 1
+        else:
+            skipped_count += 1 
+
+    print(f"Inserted: {inserted_count}")
+    print(f"Skipped: {skipped_count}")
 
     conn.commit()
+    
 
     cursor.close()
     conn.close()
