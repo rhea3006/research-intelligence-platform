@@ -32,3 +32,10 @@ class RelatedPaper(BaseModel):
 class PaperWithRelated(BaseModel):
     paper : PaperDetail
     related_papers: list[RelatedPaper]
+
+class SemanticSearchResult(BaseModel):
+    arxiv_id: str
+    title: str
+    authors: str
+    published_date: str | None
+    similarity: float

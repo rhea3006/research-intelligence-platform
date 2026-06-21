@@ -1,8 +1,12 @@
 from fastapi import FastAPI
-from api.models import PaperSummary, PaperDetail , RelatedPaper, PaperWithRelated, SearchResult
-from api.database import get_connection, get_all_papers, get_paper_by_id, search_papers, get_related_papers
-from api.services.paper_service import get_paper_with_related_service, search_papers_service
-from api.services.paper_service import get_all_papers_service, get_related_papers_service
+from api.models import (PaperSummary, PaperDetail , RelatedPaper, PaperWithRelated, 
+                        SearchResult, SemanticSearchResult)
+from api.database import (get_connection, get_all_papers, get_paper_by_id, search_papers,
+                           get_related_papers)
+from api.services.paper_service import (get_paper_with_related_service,
+                                        search_papers_service,get_all_papers_service, 
+                                        get_related_papers_service)
+from api.services.embedding_service import semantic_search
 import psycopg2
 
 
@@ -31,3 +35,8 @@ def search(q: str, category: str | None = None, author: str | None = None ,year:
 @app.get("/papers/{arxiv_id}/related",response_model=list[RelatedPaper])
 def related_papers(arxiv_id: str):
     return get_related_papers_service(arxiv_id)
+
+@app.get("/semantic-search")
+def semantic_search_endpoint(q: str,response_model=list[SemanticSearchResult]):
+
+    return semantic_search(q)
