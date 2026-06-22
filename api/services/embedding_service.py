@@ -1,5 +1,7 @@
 from sentence_transformers import SentenceTransformer
-from api.database import (get_papers_for_embedding,update_embedding, get_all_embeddings)
+from api.database import (get_papers_for_embedding,update_embedding, get_all_embeddings, 
+                          search_papers)
+from api.services.paper_service import search_papers_service
 import numpy as np
 import json
 
@@ -53,6 +55,29 @@ def semantic_search(query):
                         "published_date": str(published_date),"similarity": float(similarity)})
 
     results.sort( key=lambda x: x["similarity"],reverse=True)
+    return results[:10]
+
+def hybrid_search(query):
+    keyword_results = search_papers_service(q=query,page=1,limit=50)
+    semantic_results = semantic_search(query)
+
+    semantic_lookup = {}
+    for paper in semantic_results:
+        semantic_lookup[paper["arxiv_id"]] = paper["similarity"]
+
+    results = []
+    for paper in keyword_results:
+        normalized_keyword = (paper["relevance_score"] / 8)
+        semantic_score = semantic_lookup.get( paper["arxiv_id"],0)
+        hybrid_score = (0.5 * normalized_keyword + 0.5 * semantic_score)
+
+        paper["semantic_score"] = semantic_score
+        paper["hybrid_score"] = hybrid_score
+
+        results.append(paper)
+
+    results.sort(key=lambda x: x["hybrid_score"], reverse=True)
+
     return results[:10]
 
 if __name__ == "__main__":

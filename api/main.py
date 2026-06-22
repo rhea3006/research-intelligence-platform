@@ -6,7 +6,7 @@ from api.database import (get_connection, get_all_papers, get_paper_by_id, searc
 from api.services.paper_service import (get_paper_with_related_service,
                                         search_papers_service,get_all_papers_service, 
                                         get_related_papers_service)
-from api.services.embedding_service import semantic_search
+from api.services.embedding_service import (semantic_search , hybrid_search)
 import psycopg2
 
 
@@ -40,3 +40,7 @@ def related_papers(arxiv_id: str):
 def semantic_search_endpoint(q: str,response_model=list[SemanticSearchResult]):
 
     return semantic_search(q)
+
+@app.get("/hybrid-search")
+def hybrid_search_endpoint(q: str):
+    return hybrid_search(q)
