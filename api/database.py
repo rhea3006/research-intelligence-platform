@@ -1,7 +1,13 @@
 import psycopg2
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+print("DATABASE_URL =", os.getenv("DATABASE_URL"))
 
 def get_connection():
-    return psycopg2.connect(dbname="research_intelligence", user="rheamathur",host="localhost")
+    return psycopg2.connect(os.getenv("DATABASE_URL"))
 
 def get_all_papers(limit,offset):
     conn=get_connection()
