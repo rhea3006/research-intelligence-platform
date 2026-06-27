@@ -1,11 +1,11 @@
-from sentence_transformers import SentenceTransformer
+#from sentence_transformers import SentenceTransformer
 from api.database import (get_papers_for_embedding,update_embedding, get_all_embeddings, 
                           search_papers)
 from api.services.paper_service import search_papers_service
 import numpy as np
 import json
 
-model = SentenceTransformer("all-MiniLM-L6-v2")
+#model = SentenceTransformer("all-MiniLM-L6-v2")
 
 def generate_embedding(text):
     return model.encode(text)
