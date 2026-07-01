@@ -7,10 +7,14 @@ from api.services.paper_service import (get_paper_with_related_service,
                                         search_papers_service,get_all_papers_service, 
                                         get_related_papers_service)
 '''from api.services.embedding_service import (semantic_search , hybrid_search)'''
+from fastapi.middleware.cors import CORSMiddleware
 import psycopg2
 
 
 app= FastAPI() #object of FastAPI class, this will represent the entire backend application
+
+app.add_middleware(CORSMiddleware,allow_origins=["http://localhost:5173",],allow_credentials=True,
+    allow_methods=["*"],allow_headers=["*"],)
 
 @app.get("/") # this is root route, whenever the browser visits a particular url, it sends a HTTP request which is get, it tells to run the function below.
 def home(): # fastAPI knows whenver we have a GET call, go to home function
