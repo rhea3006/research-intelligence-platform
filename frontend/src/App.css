@@ -229,6 +229,27 @@
     color: white;
 }
 
+.error-banner {
+    width: 90%;
+    max-width: 900px;
+
+    margin: 20px auto;
+
+    padding: 16px;
+
+    background-color: #4b1d1d;
+
+    border: 1px solid #ff6b6b;
+
+    color: #ffd4d4;
+
+    border-radius: 10px;
+
+    text-align: center;
+
+    font-weight: 500;
+}
+
 main {
     padding-bottom: 60px;
 }

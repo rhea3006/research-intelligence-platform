@@ -6,24 +6,37 @@ import SearchBar from "./components/SearchBar";
 import { searchPapers } from "./services/api";
 import type { Paper } from "./types/paper";
 import PaperCard from "./components/PaperCard";
+import LoadingSpinner from "./components/LoadingSpinner";
 
 function App() {
   const [query, setQuery] = useState("");
   const [papers, setPapers] = useState<Paper[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSearch = async () => {
     setHasSearched(true);
     setLoading(true);
+    setError("");
+
     try {
       const results = await searchPapers(query);
       setPapers(results);
-    } catch (error) {
-      console.error(error);
-    } finally {
+    } 
+    catch (err) {
+      console.error(err);
+      setError("Couldn't connect to the server. Please try again.");
+    }
+    finally {
       setLoading(false);
     }
+  };
+  const handleClear = () => {
+    setQuery("");
+    setPapers([]);
+    setError("");
+    setHasSearched(false);
   };
   return (
     <>
@@ -33,13 +46,19 @@ function App() {
       />
       <main>
         <HeroSection />
-        <SearchBar query={query} setQuery={setQuery} onSearch={handleSearch}
+        <SearchBar 
+          query={query} 
+          setQuery={setQuery} 
+          onSearch={handleSearch} 
+          onClear={handleClear}
         />
+        {error && (
+          <div className="error-banner">
+            ⚠️ {error}
+           </div>
+        )}
         {loading ? (
-          <div className="empty-state">
-              <h2>🔄 Searching papers...</h2>
-              <p>Please wait while we fetch the latest research papers.</p>
-          </div>
+          <LoadingSpinner />
       ) : !hasSearched ? (
           <div className="empty-state">
               <h2>🔍 Search for research papers</h2>
@@ -73,5 +92,6 @@ function App() {
       </main>
     </>
   );
+  
 }
 export default App;

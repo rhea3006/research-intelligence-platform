@@ -1,0 +1,49 @@
+.loading-container {
+    text-align: center;
+
+    padding: 80px 20px;
+
+    color: #c7c7c7;
+}
+
+.loading-container h2 {
+    color: white;
+
+    margin-top: 24px;
+
+    margin-bottom: 12px;
+}
+
+.loading-container p {
+    max-width: 450px;
+
+    margin: auto;
+}
+
+.spinner {
+    width: 60px;
+
+    height: 60px;
+
+    border: 6px solid #3a3d45;
+
+    border-top: 6px solid #4f8cff;
+
+    border-radius: 50%;
+
+    margin: auto;
+
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
