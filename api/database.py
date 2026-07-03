@@ -95,7 +95,11 @@ def search_papers(q, limit, offset, category= None, author= None, year= None):
     cursor.close()
     conn.close()
 
-    print(results[0])
+    if results:
+        print(results[0])
+    else:
+        print("No papers found.")
+
     return results
 
 def get_related_papers(arxiv_id):
