@@ -56,13 +56,13 @@ def hybrid_search_endpoint(q: str):
 @app.get("/papers/{arxiv_id}/download")
 def download_paper(arxiv_id: str):
     paper = get_paper_by_id(arxiv_id)
-    print(paper)
-    print(type(paper))
-
     if not paper:
         raise HTTPException(status_code=404, detail="Paper not found")
     
-    pdf_url = paper["arxiv_url"].replace("/abs/", "/pdf/") + ".pdf"
+    pdf_url = paper[7]
+    if not pdf_url.endswith(".pdf"):
+        pdf_url += ".pdf"
+
     response = requests.get(pdf_url)
     if response.status_code != 200:
         raise HTTPException(status_code=404, detail="PDF not found")
