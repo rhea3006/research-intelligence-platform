@@ -13,4 +13,5 @@ export interface PaperDetail {
     abstract: string;
     categories: string;
     published_date: string;
+    arxiv_url: string;
 }

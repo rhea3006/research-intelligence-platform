@@ -16,6 +16,7 @@ function PaperDetailsPage() {
     // State
     const [paper, setPaper] = useState<PaperDetail | null>(null);
     const [relatedPapers, setRelatedPapers] = useState<Paper[]>([]);
+    const [copied, setCopied] = useState(false);
 
     // 👇 ADD useEffect RIGHT HERE
     useEffect(() => {
@@ -43,6 +44,8 @@ function PaperDetailsPage() {
     if (!paper) {
         return <p>Loading paper...</p>;
     }
+
+    const pdfUrl = paper.arxiv_url.replace("/abs/", "/pdf/") + ".pdf";
 
     // Main UI
     return (
@@ -76,7 +79,63 @@ function PaperDetailsPage() {
                 </p>
 
             </div>
+            <div className="paper-actions">
+                <a
+                    href={paper.arxiv_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="action-btn"
+                >
+                    🌐 View on arXiv
+                </a>
+                <a
+                    href={pdfUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="action-btn"
+                >
+                    📑 Open PDF
+                </a>
+                <button
+                    className="action-btn"
+                    onClick={() => {
+                        navigator.clipboard.writeText(
+                        `${paper.authors}
+                        "${paper.title}"
+                        arXiv: ${paper.arxiv_id}
+                        Published: ${paper.published_date}`
+                        );
+                        setCopied(true);
+                        setTimeout(() => setCopied(false), 2000);
+                    }}
+                    >
+                    📋 Copy Citation
+                </button>
+                <button
+                    className="action-btn"
+                    onClick={() =>
+                        navigator.clipboard.writeText(
+                        `${paper.authors}
+                        "${paper.title}"
+                        arXiv: ${paper.arxiv_id}
+                        Published: ${paper.published_date}`
+                        )
+                    }
+                >
+                    🔗 Share
+                </button>
+            </div>
+            {copied && (
+                <p className="copy-message">
+                    ✅ Citation copied!
+                </p>
+            )}
+            <section className="abstract-section">
 
+                <h2>Abstract</h2>
+
+                <p>{paper.abstract}</p>
+            </section>
             <section className="abstract-section">
 
                 <h2>Abstract</h2>

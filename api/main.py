@@ -8,6 +8,10 @@ from api.services.paper_service import (get_paper_with_related_service,
                                         get_related_papers_service)
 '''from api.services.embedding_service import (semantic_search , hybrid_search)'''
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
+from fastapi import HTTPException
+import requests
+from io import BytesIO
 import psycopg2
 
 
@@ -48,3 +52,23 @@ def semantic_search_endpoint(q: str,response_model=list[SemanticSearchResult]):
 @app.get("/hybrid-search")
 def hybrid_search_endpoint(q: str):
     return hybrid_search(q)'''
+
+@app.get("/papers/{arxiv_id}/download")
+def download_paper(arxiv_id: str):
+    paper = get_paper_by_id(arxiv_id)
+    print(paper)
+    print(type(paper))
+
+    if not paper:
+        raise HTTPException(status_code=404, detail="Paper not found")
+    
+    pdf_url = paper["arxiv_url"].replace("/abs/", "/pdf/") + ".pdf"
+    response = requests.get(pdf_url)
+    if response.status_code != 200:
+        raise HTTPException(status_code=404, detail="PDF not found")
+    
+    return StreamingResponse(
+        BytesIO(response.content),
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{arxiv_id}.pdf"'},
+    )

@@ -95,3 +95,53 @@
     margin-top:30px;
 
 }
+
+.paper-actions {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 15px;
+
+    margin: 35px 0;
+
+}
+
+.action-btn {
+
+    background: #4f8cff;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 10px;
+
+    padding: 12px 20px;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+
+    font-size: 0.95rem;
+
+}
+
+.action-btn:hover {
+
+    background: #6aa0ff;
+
+    transform: translateY(-2px);
+
+}
+
+.copy-message {
+    color: #7ee787;
+
+    margin-bottom: 25px;
+
+    font-weight: 600;
+}
