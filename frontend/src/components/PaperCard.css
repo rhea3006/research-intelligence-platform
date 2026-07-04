@@ -59,6 +59,10 @@
     font-size: 0.95rem;
 
     transition: 0.25s;
+
+    text-decoration: none;
+
+    display: inline-block;
 }
 
 .view-btn:hover {

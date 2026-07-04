@@ -15,3 +15,11 @@ export async function searchPapers(query: string) {
 
   return response.data;
 }
+
+export const getPaper = async (arxivId: string) => {
+
+    const response = await api.get(`/papers/${arxivId}`);
+
+    return response.data;
+
+};
