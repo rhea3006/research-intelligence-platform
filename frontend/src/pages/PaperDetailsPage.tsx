@@ -89,12 +89,12 @@ function PaperDetailsPage() {
                     🌐 View on arXiv
                 </a>
                 <a
-                    href={pdfUrl}
+                    href={`https://research-intelligence-platform.onrender.com/papers/${paper.arxiv_id}/download`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="action-btn"
                 >
-                    📑 Open PDF
+                    📑 Download PDF
                 </a>
                 <button
                     className="action-btn"
