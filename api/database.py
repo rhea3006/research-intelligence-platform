@@ -37,7 +37,8 @@ def get_paper_by_id(arxiv_id):
 
     return paper
 
-def search_papers(q, limit, offset, category= None, author= None, year= None):
+def search_papers(q, limit, offset, category= None, author= None, year= None,
+                   sort="relevance"):
     conn= get_connection()
     cursor=conn.cursor()
 
@@ -46,6 +47,13 @@ def search_papers(q, limit, offset, category= None, author= None, year= None):
     params.extend([limit, offset])
 
     filters=[]
+
+    if sort == "newest":
+        order_by = "published_date DESC"
+    elif sort == "oldest":
+        order_by = "published_date ASC"
+    else:
+        order_by = "relevance_score DESC"
 
     query="""Select arxiv_id, title, authors, published_date, 
                    (CASE
@@ -69,10 +77,7 @@ def search_papers(q, limit, offset, category= None, author= None, year= None):
                    END) AS relevance_score from papers 
                    WHERE (title ILIKE %s OR abstract ILIKE %s OR authors ILIKE %s 
                    OR categories ILIKE %s )
-                   ORDER BY relevance_score DESC
-                   LIMIT %s
-                   OFFSET %s"""
-    
+                   ORDER BY ORDER_BY_PLACEHOLDER LIMIT %s OFFSET %s"""
     
     if category:
         filters.append("categories ILIKE %s")
@@ -87,8 +92,10 @@ def search_papers(q, limit, offset, category= None, author= None, year= None):
         params.insert(-2, year)
 
     if filters:
-        query = query.replace("ORDER BY relevance_score DESC",
-                               f"AND {' AND '.join(filters)} ORDER BY relevance_score DESC")
+        query = query.replace("ORDER BY ORDER_BY_PLACEHOLDER",
+            f"AND {' AND '.join(filters)} ORDER BY ORDER_BY_PLACEHOLDER")
+
+    query = query.replace("ORDER_BY_PLACEHOLDER",order_by)
 
     cursor.execute(query, params)
     results=cursor.fetchall()

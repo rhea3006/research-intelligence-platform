@@ -34,11 +34,11 @@ def get_paper(arxiv_id):
     
 
 @app.get("/search", response_model=list[SearchResult])
-def search(q: str, category: str | None = None, author: str | None = None ,year: int | None = None
-           ,page: int=1, limit: int=10):
+def search(q: str, category: str | None = None, author: str | None = None ,year: int | None = None,
+           sort: str = "relevance",page: int=1, limit: int=10):
     
     return search_papers_service(q=q, page=page, limit=limit, category=category, author=author,
-                                 year=year)
+                                 year=year, sort=sort)
 
 @app.get("/papers/{arxiv_id}/related",response_model=list[RelatedPaper])
 def related_papers(arxiv_id: str):

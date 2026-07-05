@@ -6,10 +6,20 @@ const api = axios.create({
 
 export default api;
 
-export async function searchPapers(query: string) {
+export async function searchPapers(
+  query: string,
+  category: string,
+  author: string,
+  year: string,
+  sort: string
+) {
   const response = await api.get("/search", {
     params: {
       q: query,
+      category,
+      author,
+      year,
+      sort,
     },
   });
 

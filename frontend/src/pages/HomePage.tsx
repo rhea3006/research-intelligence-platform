@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import '../App.css'
-import Navbar from "../components/Navbar";
 import HeroSection from "../components/HeroSection";
 import SearchBar from "../components/SearchBar";
 import { searchPapers } from "../services/api";
 import type { Paper } from "../types/paper";
 import PaperCard from "../components/PaperCard";
+import SearchFilters from "../components/SearchFilters";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 
@@ -15,6 +15,10 @@ function HomePage() {
       const [loading, setLoading] = useState(false);
       const [hasSearched, setHasSearched] = useState(false);
       const [error, setError] = useState("");
+      const [category, setCategory] = useState("");
+      const [author, setAuthor] = useState("");
+      const [year, setYear] = useState("");
+      const [sort, setSort] = useState("relevance");
     
       const handleSearch = async () => {
         setHasSearched(true);
@@ -22,7 +26,7 @@ function HomePage() {
         setError("");
     
         try {
-          const results = await searchPapers(query);
+          const results = await searchPapers(query,category,author,year,sort);
           setPapers(results);
         } 
         catch (err) {
@@ -48,6 +52,16 @@ function HomePage() {
           setQuery={setQuery} 
           onSearch={handleSearch} 
           onClear={handleClear}
+        />
+        <SearchFilters
+          category={category}
+          setCategory={setCategory}
+          author={author}
+          setAuthor={setAuthor}
+          year={year}
+          setYear={setYear}
+          sort={sort}
+          setSort={setSort}
         />
         {error && (
           <div className="error-banner">
