@@ -2,23 +2,26 @@ import "./PaperCard.css";
 import type { Paper } from "../types/paper";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import {savePaper,removePaper,isPaperSaved,} from "../utils/savedPapers";
+import { useSavedPapers } from "../context/SavedPapersContext";
 
 type PaperCardProps = {
   paper: Paper;
 };
 
 function PaperCard({ paper }: PaperCardProps) {
-  const [saved, setSaved] = useState(
-    isPaperSaved(paper.arxiv_id)
-  );
+  const {
+    savePaper,
+    removePaper,
+    isPaperSaved,
+  } = useSavedPapers();
+
+  const saved = isPaperSaved(paper.arxiv_id);
   const handleSave = () => {
     if (saved) {
       removePaper(paper.arxiv_id);
     } else {
       savePaper(paper);
     }
-    setSaved(!saved);
   };
 
   return (

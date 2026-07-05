@@ -1,14 +1,8 @@
-import { useEffect, useState } from "react";
-import type { Paper } from "../types/paper";
 import PaperCard from "../components/PaperCard";
-import { getSavedPapers } from "../utils/savedPapers";
+import { useSavedPapers } from "../context/SavedPapersContext";
 
 function SavedPapersPage() {
-  const [savedPapers, setSavedPapers] = useState<Paper[]>([]);
-
-  useEffect(() => {
-    setSavedPapers(getSavedPapers());
-  }, []);
+  const { savedPapers } = useSavedPapers();
 
   return (
     <div className="saved-page">
