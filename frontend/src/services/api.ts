@@ -1,7 +1,8 @@
+import type { SearchResponse } from "../types/paper";
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://research-intelligence-platform.onrender.com",
+  baseURL: "http://127.0.0.1:8000",
 });
 
 export default api;
@@ -11,15 +12,17 @@ export async function searchPapers(
   category: string,
   author: string,
   year: string,
-  sort: string
-) {
+  sort: string,
+  page: number
+): Promise<SearchResponse> {
   const response = await api.get("/search", {
     params: {
       q: query,
-      category,
-      author,
-      year,
+      category: category || undefined,
+      author: author || undefined,
+      year: year ? Number(year) : undefined,
       sort,
+      page,
     },
   });
 

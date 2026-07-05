@@ -39,3 +39,10 @@ class SemanticSearchResult(BaseModel):
     authors: str
     published_date: str | None
     similarity: float
+
+class SearchResponse(BaseModel):
+    results: list[SearchResult]
+    page: int
+    limit: int
+    total: int
+    total_pages: int

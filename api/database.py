@@ -48,6 +48,9 @@ def search_papers(q, limit, offset, category= None, author= None, year= None,
 
     filters=[]
 
+    count_query = """SELECT COUNT(*) FROM papers WHERE (title ILIKE %s OR abstract ILIKE %s
+        OR authors ILIKE %s OR categories ILIKE %s)"""
+
     if sort == "newest":
         order_by = "published_date DESC"
     elif sort == "oldest":
@@ -99,6 +102,10 @@ def search_papers(q, limit, offset, category= None, author= None, year= None,
 
     cursor.execute(query, params)
     results=cursor.fetchall()
+    count_params = [search_term] * 4
+    cursor.execute(count_query, count_params)
+    total = cursor.fetchone()[0]
+
     cursor.close()
     conn.close()
 
@@ -107,7 +114,7 @@ def search_papers(q, limit, offset, category= None, author= None, year= None,
     else:
         print("No papers found.")
 
-    return results
+    return results, total
 
 def get_related_papers(arxiv_id):
     conn= get_connection()

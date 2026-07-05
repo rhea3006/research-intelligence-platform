@@ -20,14 +20,20 @@ def get_paper_with_related_service(arxiv_id):
 def search_papers_service(q, page, limit, category=None, author=None, year=None,sort="relevance"):
     offset= (page - 1)* limit
     
-    results= search_papers(q,limit, offset, category, author,year,sort)
+    results, total = search_papers(q,limit,offset,category,author,year,sort,)
     papers=[]
     for row in results:
         papers.append({"arxiv_id":row[0], "title": row[1],"authors": row[2],
                        "published_date": str(row[3]) if row[3] else None, "relevance_score": row[4] })
 
     
-    return papers
+    return {
+    "results": papers,
+    "page": page,
+    "limit": limit,
+    "total": total,
+    "total_pages": (total + limit - 1) // limit,
+    }
 
 def get_all_papers_service(page, limit):
     offset = (page - 1) * limit

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from api.models import (PaperSummary, PaperDetail , RelatedPaper, PaperWithRelated, 
-                        SearchResult, SemanticSearchResult)
+                        SearchResult, SemanticSearchResult, SearchResponse)
 from api.database import (get_connection, get_all_papers, get_paper_by_id, search_papers,
                            get_related_papers)
 from api.services.paper_service import (get_paper_with_related_service,
@@ -33,7 +33,7 @@ def get_paper(arxiv_id):
     return get_paper_with_related_service(arxiv_id)
     
 
-@app.get("/search", response_model=list[SearchResult])
+@app.get("/search", response_model=SearchResponse)
 def search(q: str, category: str | None = None, author: str | None = None ,year: int | None = None,
            sort: str = "relevance",page: int=1, limit: int=10):
     

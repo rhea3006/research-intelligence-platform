@@ -15,3 +15,11 @@ export interface PaperDetail {
     published_date: string;
     arxiv_url: string;
 }
+
+export interface SearchResponse {
+    results: Paper[];
+    page: number;
+    limit: number;
+    total: number;
+    total_pages: number;
+}
