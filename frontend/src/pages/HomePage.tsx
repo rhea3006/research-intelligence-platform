@@ -41,10 +41,6 @@ function HomePage() {
       };
   return (
     <>
-      <Navbar
-        title="Research Intelligence Platform"
-        subtitle="Search smarter. Discover faster."
-      />
       <main>
         <HeroSection />
         <SearchBar 

@@ -68,3 +68,30 @@
 .view-btn:hover {
     background: #2f6fe5;
 }
+
+.paper-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    gap: 12px;
+}
+
+.view-btn {
+    flex: 1;
+    text-align: center;
+}
+
+.save-btn {
+    background: #2d3748;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.save-btn:hover {
+    background: #e63946;
+}
