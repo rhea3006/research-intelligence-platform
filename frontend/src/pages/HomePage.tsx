@@ -126,27 +126,32 @@ function HomePage() {
               </p>
           </div>
       ) : (
-          <>
+            <section className="results-section">
               <h2 className="results-heading">
-                  Showing {papers.length} papers
+                Showing {(page - 1) * 10 + 1}
+                  {"–"}
+                  {Math.min(page * 10, totalResults)}
+                  {" of "}
+                  {totalResults}
+                  {" papers"}
               </h2>
               <div className="results">
-                  {papers.map((paper) => (
-                      <PaperCard
-                          key={paper.arxiv_id}
-                          paper={paper}
-                      />
-                  ))}
-                  {papers.length > 0 && (
-                    <Pagination
-                      page={page}
-                      totalPages={totalPages}
-                      onPrevious={handlePrevious}
-                      onNext={handleNext}
+                {papers.map((paper) => (
+                  <PaperCard
+                    key={paper.arxiv_id}
+                      paper={paper}
                   />
-                  )}
+                ))}
+                {papers.length > 0 && (
+                  <Pagination
+                    page={page}
+                    totalPages={totalPages}
+                    onPrevious={handlePrevious}
+                    onNext={handleNext}
+                    />
+                )}
               </div>
-          </>
+          </section>
         )}
       </main>
     </>

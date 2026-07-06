@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 type SearchBarProps = {
   query: string;
   setQuery: React.Dispatch<React.SetStateAction<string>>;
@@ -10,10 +8,14 @@ type SearchBarProps = {
 
 function SearchBar({query,setQuery,onSearch,onClear}: SearchBarProps){
   return (
-    <section>
+  <section className="search-section">
+
+    <div className="search-container">
+
       <input
         type="text"
-        placeholder="Search research papers..."
+        className="search-input"
+        placeholder="🔍 Search research papers..."
         value={query}
         onChange={(event) => setQuery(event.target.value)}
         onKeyDown={(event) => {
@@ -22,16 +24,27 @@ function SearchBar({query,setQuery,onSearch,onClear}: SearchBarProps){
           }
         }}
       />
-      <button onClick={onSearch}>
+
+      <button
+        className="search-btn"
+        onClick={onSearch}
+      >
         Search
       </button>
+
       {query && (
-        <button onClick={onClear}>
+        <button
+          className="clear-btn"
+          onClick={onClear}
+        >
           Clear
         </button>
       )}
-    </section>
-  );
+
+    </div>
+
+  </section>
+);
 }
 
 export default SearchBar;

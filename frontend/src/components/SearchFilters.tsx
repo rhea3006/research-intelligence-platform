@@ -23,45 +23,49 @@ function SearchFilters({
   setSort,
 }: SearchFiltersProps) {
   return (
-    <section className="filters">
+  <section className="filters">
 
-      <input
-        placeholder="Category"
-        value={category}
-        onChange={(e) => setCategory(e.target.value)}
-      />
+    <input
+      className="filter-input"
+      placeholder="📂 Category"
+      value={category}
+      onChange={(e) => setCategory(e.target.value)}
+    />
 
-      <input
-        placeholder="Author"
-        value={author}
-        onChange={(e) => setAuthor(e.target.value)}
-      />
+    <input
+      className="filter-input"
+      placeholder="👤 Author"
+      value={author}
+      onChange={(e) => setAuthor(e.target.value)}
+    />
 
-      <input
-        placeholder="Year"
-        value={year}
-        onChange={(e) => setYear(e.target.value)}
-      />
+    <input
+      className="filter-input"
+      placeholder="📅 Year"
+      value={year}
+      onChange={(e) => setYear(e.target.value)}
+    />
 
-      <select
-        value={sort}
-        onChange={(e) => setSort(e.target.value)}
-      >
-        <option value="relevance">
-          Relevance
-        </option>
+    <select
+      className="filter-select"
+      value={sort}
+      onChange={(e) => setSort(e.target.value)}
+    >
+      <option value="relevance">
+        ⭐ Relevance
+      </option>
 
-        <option value="newest">
-          Newest
-        </option>
+      <option value="newest">
+        🆕 Newest
+      </option>
 
-        <option value="oldest">
-          Oldest
-        </option>
-      </select>
+      <option value="oldest">
+        🕰️ Oldest
+      </option>
+    </select>
 
-    </section>
-  );
+  </section>
+);
 }
 
 export default SearchFilters;
