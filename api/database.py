@@ -58,7 +58,7 @@ def search_papers(q, limit, offset, category= None, author= None, year= None,
     else:
         order_by = "relevance_score DESC"
 
-    query="""Select arxiv_id, title, authors, published_date, 
+    query="""Select arxiv_id, title, authors,categories, published_date, 
                    (CASE
                         WHEN title ILIKE %s THEN 4
                         ELSE 0
@@ -100,12 +100,16 @@ def search_papers(q, limit, offset, category= None, author= None, year= None,
 
     query = query.replace("ORDER_BY_PLACEHOLDER",order_by)
 
+   
     cursor.execute(query, params)
+    
     results=cursor.fetchall()
+   
     count_params = [search_term] * 4
     cursor.execute(count_query, count_params)
+    
     total = cursor.fetchone()[0]
-
+   
     cursor.close()
     conn.close()
 
@@ -113,6 +117,7 @@ def search_papers(q, limit, offset, category= None, author= None, year= None,
         print(results[0])
     else:
         print("No papers found.")
+        
 
     return results, total
 

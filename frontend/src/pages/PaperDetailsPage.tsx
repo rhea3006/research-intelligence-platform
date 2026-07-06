@@ -136,13 +136,6 @@ function PaperDetailsPage() {
 
                 <p>{paper.abstract}</p>
             </section>
-            <section className="abstract-section">
-
-                <h2>Abstract</h2>
-
-                <p>{paper.abstract}</p>
-
-            </section>
             <section className="related-section">
                 <h2>Related Papers</h2>
                 <div className="related-grid">

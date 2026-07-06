@@ -19,6 +19,7 @@ class SearchResult(BaseModel):
     arxiv_id: str
     title: str
     authors: str | None = None
+    categories: str
     published_date: str | None = None
     relevance_score: int
 

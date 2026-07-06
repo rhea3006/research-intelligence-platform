@@ -42,7 +42,6 @@ function HomePage() {
             sort,
             pageNumber
           );
-
           setPapers(response.results);
           setTotalPages(response.total_pages);
           setTotalResults(response.total);

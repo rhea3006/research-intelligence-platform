@@ -26,24 +26,36 @@ function PaperCard({ paper }: PaperCardProps) {
 
   return (
     <div className="paper-card">
-      <h3>{paper.title}</h3>
-        <p>👤 <strong>Authors:</strong> {paper.authors}</p>
-        <p>📅 <strong>Published:</strong> {paper.published_date}</p>
-        <p>⭐ <strong>Relevance:</strong> {paper.relevance_score}</p>
-        <div className="paper-actions">
-          <button
-            className="save-btn"
-            onClick={handleSave}
-          >
-            {saved ? "❤️ Saved" : "🤍 Save"}
-          </button>
-          <Link
+        <h3 className="paper-title">
+            {paper.title}
+        </h3>
+        <p className="paper-authors">
+            👤 {paper.authors}
+        </p>
+        <div className="paper-meta">
+            <span>
+                📅 {paper.published_date}
+            </span>
+            <span className="relevance-badge">
+                ⭐ {paper.relevance_score}
+            </span>
+        </div>
+        {/*<div className="category-list">
+            {paper.categories.split(",").map((category) => (
+                <span
+                    key={category}
+                    className="category-badge"
+                >
+                    {category.trim()}
+                </span>
+            ))}
+        </div>*/}
+        <Link
             to={`/paper/${paper.arxiv_id}`}
             className="view-btn"
-          >
+        >
             View Details →
-          </Link>
-        </div>
+        </Link>
     </div>
   );
 }
