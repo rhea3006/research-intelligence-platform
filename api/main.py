@@ -6,16 +6,35 @@ from api.database import (get_connection, get_all_papers, get_paper_by_id, searc
 from api.services.paper_service import (get_paper_with_related_service,
                                         search_papers_service,get_all_papers_service, 
                                         get_related_papers_service)
+from contextlib import asynccontextmanager
+from ingestion.ingest_paper import run_ingestion
+from ingestion.scheduler import (start_scheduler,stop_scheduler, scheduled_ingestion)
 '''from api.services.embedding_service import (semantic_search , hybrid_search)'''
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
+from contextlib import asynccontextmanager
 from fastapi import HTTPException
 import requests
 from io import BytesIO
 import psycopg2
 
+@asynccontextmanager
+async def lifespan(app):
+    print("🚀 Starting Research Intelligence Platform...")
 
-app= FastAPI() #object of FastAPI class, this will represent the entire backend application
+    start_scheduler()
+
+    yield
+
+    stop_scheduler()
+
+    print("🛑 Shutting down Research Intelligence Platform...")
+
+app = FastAPI(
+    title="Research Intelligence Platform",
+    lifespan=lifespan,
+) #object of FastAPI class, this will represent the entire backend application
+
 
 app.add_middleware(CORSMiddleware,allow_origins=["http://localhost:5173",],allow_credentials=True,
     allow_methods=["*"],allow_headers=["*"],)

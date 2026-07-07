@@ -1,7 +1,7 @@
 import requests
 import feedparser
 import psycopg2
-from insert_paper import get_connection
+from ingestion.insert_paper import get_connection
 
 
 def fetch_papers(query, max_results):
@@ -42,33 +42,44 @@ def save_paper(cursor, paper_data):
     )
     return cursor.rowcount
 
-def main():
+def run_ingestion(query="all:machine learning", max_results=50, verbose=True,):
     conn = get_connection()
     cursor = conn.cursor()
-    papers = fetch_papers( query="all:machine learning", max_results=50)
+    papers = fetch_papers(query=query,max_results=max_results,)
     inserted_count = 0
     skipped_count = 0
 
     for paper in papers:
         paper_data = extract_paper_data(paper)
         inserted = save_paper(cursor, paper_data)
-        if inserted:
-            print(f"Inserted: {paper_data['title']}")
-        else:
-            print(f"Skipped: {paper_data['title']}")
+        if verbose:
+            if inserted:
+                print(f"Inserted: {paper_data['title']}")
+            else:
+                print(f"Skipped: {paper_data['title']}")
+
         if inserted:
             inserted_count += 1
         else:
             skipped_count += 1 
 
-    print(f"Inserted: {inserted_count}")
-    print(f"Skipped: {skipped_count}")
-
+    if verbose:
+        print(f"Inserted: {inserted_count}")
+        print(f"Skipped: {skipped_count}")
     conn.commit()
     
 
     cursor.close()
     conn.close()
+
+    return {
+        "inserted": inserted_count,
+        "skipped": skipped_count,
+    }
+
+def main():
+    run_ingestion()
+
 
 if __name__ == "__main__":
     main()
