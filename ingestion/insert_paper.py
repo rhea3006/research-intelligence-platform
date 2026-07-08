@@ -1,7 +1,4 @@
-import psycopg2
-
-def get_connection():
-    return psycopg2.connect(dbname="research_intelligence",user="rheamathur",host="localhost")
+from api.database import get_connection
 
 if __name__ == "__main__":
     conn= get_connection()

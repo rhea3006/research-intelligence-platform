@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from ingestion.scheduler import (start_scheduler,stop_scheduler)
-'''from api.services.embedding_service import (semantic_search , hybrid_search)'''
 from fastapi.middleware.cors import CORSMiddleware
 from api.routes import search_router, papers_router
 from contextlib import asynccontextmanager
@@ -34,12 +33,4 @@ app.add_middleware(CORSMiddleware,allow_origins=["http://localhost:5173",],allow
 def home(): # fastAPI knows whenver we have a GET call, go to home function
     return{"message": "Research Intelligence Platform API"} # FastAPI automatically converts dictionaries into JSON, so it sends it back to the browser.
 
-'''@app.get("/semantic-search")
-def semantic_search_endpoint(q: str,response_model=list[SemanticSearchResult]):
-
-    return semantic_search(q)
-
-@app.get("/hybrid-search")
-def hybrid_search_endpoint(q: str):
-    return hybrid_search(q)'''
 

@@ -41,6 +41,16 @@ class SemanticSearchResult(BaseModel):
     published_date: str | None
     similarity: float
 
+class HybridSearchResult(BaseModel):
+    arxiv_id: str
+    title: str
+    authors: str
+    categories: str
+    published_date: str | None
+    relevance_score: float
+    semantic_score: float
+    hybrid_score: float
+
 class SearchResponse(BaseModel):
     results: list[SearchResult]
     page: int

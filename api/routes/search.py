@@ -1,7 +1,7 @@
 from fastapi import APIRouter
-from api.models import SearchResponse
+from api.models import ( SearchResponse,SemanticSearchResult,HybridSearchResult)
 from api.services.search_service import search_papers_service
-
+from api.services.embedding_service import (semantic_search,hybrid_search,)
 router = APIRouter()
 
 @router.get("/search", response_model=SearchResponse)
@@ -10,3 +10,12 @@ def search(q: str, category: str | None = None, author: str | None = None ,year:
     
     return search_papers_service(q=q, page=page, limit=limit, category=category,
                                   author=author,year=year, sort=sort)
+
+@router.get("/semantic-search")
+def semantic_search_endpoint(q: str,response_model=list[SemanticSearchResult]):
+
+    return semantic_search(q)
+
+@router.get("/hybrid-search")
+def hybrid_search_endpoint(q: str, response_model=list[HybridSearchResult]):
+    return hybrid_search(q)

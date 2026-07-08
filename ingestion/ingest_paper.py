@@ -1,7 +1,8 @@
 import requests
 import feedparser
 import psycopg2
-from ingestion.insert_paper import get_connection
+from api.database import get_connection
+from api.services.embedding_service import create_paper_embedding
 
 
 def fetch_papers(query, max_results):
@@ -25,8 +26,8 @@ def extract_paper_data(paper):
 
 def save_paper(cursor, paper_data):
     cursor.execute("""INSERT INTO papers(arxiv_id, title, abstract, authors, categories, 
-        arxiv_url, published_date, updated_date)
-        VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
+        arxiv_url, published_date, updated_date,embedding)
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
         ON CONFLICT (arxiv_id)
         DO NOTHING""",
         (
@@ -37,12 +38,14 @@ def save_paper(cursor, paper_data):
             paper_data["categories"],
             paper_data["arxiv_url"],
             paper_data["published_date"],
-            paper_data["updated_date"]
+            paper_data["updated_date"],
+            paper_data["embedding"]
+
         )
     )
     return cursor.rowcount
 
-def run_ingestion(query="all:machine learning", max_results=50, verbose=True,):
+def run_ingestion(query="all:machine learning", max_results=150, verbose=True,):
     conn = get_connection()
     cursor = conn.cursor()
     papers = fetch_papers(query=query,max_results=max_results,)
@@ -51,6 +54,10 @@ def run_ingestion(query="all:machine learning", max_results=50, verbose=True,):
 
     for paper in papers:
         paper_data = extract_paper_data(paper)
+        paper_data["embedding"] = create_paper_embedding(
+            paper_data["title"],
+            paper_data["abstract"],
+        )
         inserted = save_paper(cursor, paper_data)
         if verbose:
             if inserted:

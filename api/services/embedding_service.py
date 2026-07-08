@@ -1,19 +1,23 @@
-#from sentence_transformers import SentenceTransformer
-from api.database import (get_papers_for_embedding,update_embedding, get_all_embeddings, 
-                          search_papers)
-from api.services.paper_service import search_papers_service
+from sentence_transformers import SentenceTransformer
+from api.database import (get_papers_for_embedding,update_embedding, get_all_embeddings,)
 import numpy as np
 import json
 
-#model = SentenceTransformer("all-MiniLM-L6-v2")
+model = None
+
+def get_model():
+    global model
+    if model is None:
+        print("Loading embedding model...")
+        model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+    return model
 
 def generate_embedding(text):
-    return model.encode(text)
+    return get_model().encode(text)
 
 def cosine_similarity(a, b):
     return np.dot(a, b) / (np.linalg.norm(a) *np.linalg.norm(b))
 
-embedding = model.encode("machine learning")
 
 def create_paper_embedding(title, abstract):
 
@@ -38,6 +42,7 @@ def backfill_embeddings():
         update_embedding(arxiv_id,embedding)
         print(f"Embedded {arxiv_id}")
 
+
 def semantic_search(query):
     query_embedding = generate_embedding(query)
     papers = get_all_embeddings()
@@ -48,7 +53,12 @@ def semantic_search(query):
         title = paper[1]
         authors = paper[2]
         published_date = paper[3]
-        paper_embedding = json.loads(paper[4])
+        
+        if paper[4] is None:
+            continue
+
+        paper_embedding = np.array(json.loads(paper[4]))
+
         similarity = cosine_similarity( query_embedding, paper_embedding)
 
         results.append({"arxiv_id": arxiv_id,"title": title,"authors": authors,
@@ -58,7 +68,16 @@ def semantic_search(query):
     return results[:10]
 
 def hybrid_search(query):
-    keyword_results = search_papers_service(q=query,page=1,limit=50)
+
+    from api.services.search_service import search_papers_service
+    
+    keyword_response = search_papers_service(
+        q=query,
+        page=1,
+        limit=50
+    )
+
+    keyword_results = keyword_response["results"]
     semantic_results = semantic_search(query)
 
     semantic_lookup = {}
@@ -81,6 +100,6 @@ def hybrid_search(query):
     return results[:10]
 
 if __name__ == "__main__":
-    results = semantic_search("fake news detection")
-    for result in results:
-        print(result["title"],result["similarity"])
+    print("Starting embedding backfill...")
+    backfill_embeddings()
+    print("Backfill complete.")

@@ -1,7 +1,6 @@
 from api.database import search_papers
 
 
-
 def search_papers_service(q, page, limit, category=None, author=None, year=None,sort="relevance"):
     offset= (page - 1)* limit
     
