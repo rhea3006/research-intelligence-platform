@@ -58,29 +58,29 @@ def search_papers(q, limit, offset, category= None, author= None, year= None,
     else:
         order_by = "relevance_score DESC"
 
-    query="""Select arxiv_id, title, authors,categories, published_date, 
-                   (CASE
-                        WHEN title ILIKE %s THEN 4
-                        ELSE 0
-                   END
-                   +
-                   CASE
-                        WHEN abstract ILIKE %s THEN 3
-                        ELSE 0
-                    END
-                   +
-                    CASE
-                        WHEN categories ILIKE %s THEN 2
-                        ELSE 0
-                   END
-                   +
-                   CASE
-                        WHEN authors ILIKE %s THEN 1
-                        ELSE 0 
-                   END) AS relevance_score from papers 
-                   WHERE (title ILIKE %s OR abstract ILIKE %s OR authors ILIKE %s 
-                   OR categories ILIKE %s )
-                   ORDER BY ORDER_BY_PLACEHOLDER LIMIT %s OFFSET %s"""
+    query="""SELECT arxiv_id,title,authors,categories,published_date,
+        (CASE
+            WHEN title ILIKE %s THEN 4
+            ELSE 0
+        END
+        +
+         CASE
+            WHEN abstract ILIKE %s THEN 3
+            ELSE 0
+        END
+        +
+        CASE
+            WHEN categories ILIKE %s THEN 2
+            ELSE 0
+        END
+        +
+        CASE
+            WHEN authors ILIKE %s THEN 1
+            ELSE 0
+        END) AS relevance_score, embedding FROM papers
+        WHERE (title ILIKE %s OR abstract ILIKE %s OR authors ILIKE %s 
+        OR categories ILIKE %s )
+        ORDER BY ORDER_BY_PLACEHOLDER LIMIT %s OFFSET %s"""
     
     if category:
         filters.append("categories ILIKE %s")

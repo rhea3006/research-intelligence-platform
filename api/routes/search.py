@@ -8,14 +8,37 @@ router = APIRouter()
 def search(q: str, category: str | None = None, author: str | None = None ,year: int | None = None,
            sort: str = "relevance",page: int=1, limit: int=10):
     
-    return search_papers_service(q=q, page=page, limit=limit, category=category,
-                                  author=author,year=year, sort=sort)
+    return hybrid_search(
+        q=q,
+        page=page,
+        limit=limit,
+        category=category,
+        author=author,
+        year=year,
+        sort=sort,
+    )
 
 @router.get("/semantic-search")
 def semantic_search_endpoint(q: str,response_model=list[SemanticSearchResult]):
 
     return semantic_search(q)
 
-@router.get("/hybrid-search")
-def hybrid_search_endpoint(q: str, response_model=list[HybridSearchResult]):
-    return hybrid_search(q)
+@router.get("/hybrid-search", response_model=SearchResponse)
+def hybrid_search_endpoint(
+    q: str,
+    category: str | None = None,
+    author: str | None = None,
+    year: int | None = None,
+    sort: str = "relevance",
+    page: int = 1,
+    limit: int = 10,
+):
+    return hybrid_search(
+        q=q,
+        page=page,
+        limit=limit,
+        category=category,
+        author=author,
+        year=year,
+        sort=sort,
+    )

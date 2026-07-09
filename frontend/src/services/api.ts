@@ -15,7 +15,7 @@ export async function searchPapers(
   sort: string,
   page: number
 ): Promise<SearchResponse> {
-  const response = await api.get("/search", {
+  const response = await api.get("/hybrid-search", {
     params: {
       q: query,
       category: category || undefined,

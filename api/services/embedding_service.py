@@ -1,5 +1,6 @@
 from sentence_transformers import SentenceTransformer
 from api.database import (get_papers_for_embedding,update_embedding, get_all_embeddings,)
+from api.services.search_service import search_papers_service
 import numpy as np
 import json
 
@@ -17,7 +18,6 @@ def generate_embedding(text):
 
 def cosine_similarity(a, b):
     return np.dot(a, b) / (np.linalg.norm(a) *np.linalg.norm(b))
-
 
 def create_paper_embedding(title, abstract):
 
@@ -67,18 +67,24 @@ def semantic_search(query):
     results.sort( key=lambda x: x["similarity"],reverse=True)
     return results[:10]
 
-def hybrid_search(query):
-
-    from api.services.search_service import search_papers_service
+def hybrid_search(q,page=1,limit=10,category=None,author=None, year=None,
+                  sort="relevance",):
+   
     
+    from api.services.search_service import search_papers_service
+
     keyword_response = search_papers_service(
-        q=query,
-        page=1,
-        limit=50
+        q=q,
+        page=page,
+        limit=limit,
+        category=category,
+        author=author,
+        year=year,
+        sort=sort,
     )
 
     keyword_results = keyword_response["results"]
-    semantic_results = semantic_search(query)
+    semantic_results = semantic_search(q)
 
     semantic_lookup = {}
     for paper in semantic_results:
@@ -92,12 +98,20 @@ def hybrid_search(query):
 
         paper["semantic_score"] = semantic_score
         paper["hybrid_score"] = hybrid_score
-
+        paper.pop("embedding", None)
         results.append(paper)
 
     results.sort(key=lambda x: x["hybrid_score"], reverse=True)
 
-    return results[:10]
+    return {
+        "results": results[:limit],
+        "page": page,
+        "limit": limit,
+        "total": keyword_response["total"],
+        "total_pages": keyword_response["total_pages"],
+    }
+
+
 
 if __name__ == "__main__":
     print("Starting embedding backfill...")

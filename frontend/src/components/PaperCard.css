@@ -4,11 +4,13 @@
     border-radius: 12px;
 
     padding: 20px;
-    margin-bottom: 20px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 
     transition: all 0.25s ease;
-
-    height: 100%
+    min-width: 0;
 }
 
 .paper-card:hover {
@@ -19,20 +21,6 @@
     box-shadow: 0 8px 20px rgba(0,0,0,0.25);
 }
 
-.paper-card h3 {
-    margin-top: 0;
-
-    margin-bottom: 18px;
-
-    color: white;
-
-    font-size: 1.25rem;
-
-    line-height: 1.4;
-
-    min-height: 70px;
-}
-
 .paper-card p {
     color: #c7c7c7;
 
@@ -41,45 +29,122 @@
     line-height: 1.5;
 }
 
-.view-btn {
-    margin-top: 18px;
+.paper-title-link {
+    text-decoration: none;
+}
 
-    background: #4f8cff;
+.paper-title {
+    margin: 0 0 16px;
 
     color: white;
 
-    border: none;
+    font-size: 1.3rem;
+    font-weight: 600;
+    line-height: 1.35;
+
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+     min-width: 0;
+}
+
+.paper-title:hover {
+    color: #6ea8fe;
+}
+
+.paper-title-link {
+    text-decoration: none;
+}
+
+.paper-title-link:hover .paper-title {
+    color: #6ea8fe;
+}
+
+.paper-authors {
+    color: #c7c7c7;
+
+    margin: 8px 0;
+
+    line-height: 1.5;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.paper-content{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:14px;
+}
+
+.category-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    margin: 18px 0;
+}
+
+.category-badge {
+    background: rgba(79, 140, 255, 0.12);
+
+    color: #7fb2ff;
+
+    border: 1px solid rgba(79, 140, 255, 0.25);
+
+    padding: 5px 12px;
+
+    border-radius: 999px;
+
+    font-size: 0.78rem;
+
+    font-weight: 500;
+
+    transition: 0.2s ease;
+}
+
+.category-badge:hover {
+    background: rgba(79, 140, 255, 0.22);
+
+    border-color: #4f8cff;
+}
+
+.paper-meta {
+    display: flex;
+    align-items: center;
+
+    font-size: .9rem;
+
+    color: #9ca3af;
+
+    margin: 0;
+}
+.view-btn {
+    margin-top: auto;
+
+    background: #4f8cff;
+    color: white;
 
     padding: 10px 18px;
 
     border-radius: 8px;
 
-    cursor: pointer;
-
-    font-size: 0.95rem;
-
-    transition: 0.25s;
+    text-align: center;
 
     text-decoration: none;
 
-    display: inline-block;
+    transition: .25s;
 }
 
 .view-btn:hover {
     background: #2f6fe5;
-}
-
-.paper-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 20px;
-    gap: 12px;
-}
-
-.view-btn {
-    flex: 1;
-    text-align: center;
 }
 
 .save-btn {
