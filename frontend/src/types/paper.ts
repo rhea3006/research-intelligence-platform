@@ -4,7 +4,10 @@ export interface Paper {
   authors: string;
   categories: string;
   published_date: string;
+
   relevance_score: number;
+  semantic_score: number;
+  hybrid_score: number;
 }
 
 export interface PaperDetail {

@@ -4,6 +4,7 @@ import { getPaper } from "../services/api";
 import type { PaperDetail } from "../types/paper";
 import type { Paper } from "../types/paper";
 import PaperCard from "../components/PaperCard";
+import LoadingSpinner from "../components/LoadingSpinner";
 import "./PaperDetailsPage.css";
 
 
@@ -11,38 +12,53 @@ function PaperDetailsPage() {
 
     // Read the ID from the URL
     const { arxiv_id } = useParams();
-    console.log("Paper ID:", arxiv_id);
 
     // State
     const [paper, setPaper] = useState<PaperDetail | null>(null);
     const [relatedPapers, setRelatedPapers] = useState<Paper[]>([]);
-    const [copied, setCopied] = useState(false);
+    const [linkCopied, setLinkCopied] = useState(false);
+    const [copyMessage, setCopyMessage] = useState("");
+    const [error, setError] = useState("");
 
     // 👇 ADD useEffect RIGHT HERE
     useEffect(() => {
+        window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+        });
 
-        const fetchPaper = async () => {
+    const fetchPaper = async () => {
+        if (!arxiv_id) return;
+        setPaper(null);
+        setRelatedPapers([]);
+        setError("");
 
-            if (!arxiv_id) return;
-
-            try {
-                const result = await getPaper(arxiv_id);
-                console.log("Paper returned:", result);
-                setPaper(result.paper);
-                setRelatedPapers(result.related_papers);
-            } catch (error) {
-                console.error(error);
-            }
-
-        };
-
-        fetchPaper();
+        try {
+            const result = await getPaper(arxiv_id);
+            setPaper(result.paper);
+            setRelatedPapers(result.related_papers);
+        } catch (error) {
+            console.error(error);
+            setError("Couldn't load this paper.");
+        }
+    };
+    fetchPaper();
 
     }, [arxiv_id]);
 
-    // Loading screen
+    
+    if (error) {
+        return (
+            <main className="paper-page">
+                <div className="empty-state">
+                    <h2>📄 Paper not found</h2>
+                    <p>{error}</p>
+                </div>
+            </main>
+        );
+    }
     if (!paper) {
-        return <p>Loading paper...</p>;
+    return <LoadingSpinner />;
     }
 
     const pdfUrl = paper.arxiv_url.replace("/abs/", "/pdf/") + ".pdf";
@@ -105,29 +121,43 @@ function PaperDetailsPage() {
                         arXiv: ${paper.arxiv_id}
                         Published: ${paper.published_date}`
                         );
-                        setCopied(true);
-                        setTimeout(() => setCopied(false), 2000);
+                        setCopyMessage("✅ Citation copied!");
+                        setTimeout(() => setCopyMessage(""), 2000);
                     }}
                     >
                     📋 Copy Citation
                 </button>
                 <button
                     className="action-btn"
-                    onClick={() =>
-                        navigator.clipboard.writeText(
-                        `${paper.authors}
-                        "${paper.title}"
-                        arXiv: ${paper.arxiv_id}
-                        Published: ${paper.published_date}`
-                        )
-                    }
+                    onClick={async () => {
+                        const url = window.location.href;
+                        try {
+                            if (navigator.share) {
+                                await navigator.share({
+                                    title: paper.title,
+                                    url,
+                                });
+                            } else {
+                                await navigator.clipboard.writeText(url);
+                                setLinkCopied(true);
+                                setTimeout(() => setLinkCopied(false), 2000);
+                            }
+                        } catch (error) {
+                            console.error(error);
+                        }
+                    }}
                 >
                     🔗 Share
                 </button>
             </div>
-            {copied && (
+            {copyMessage && (
                 <p className="copy-message">
-                    ✅ Citation copied!
+                    {copyMessage}
+                </p>
+            )}
+            {linkCopied && (
+                <p className="copy-message">
+                    🔗 Link copied!
                 </p>
             )}
             <section className="abstract-section">

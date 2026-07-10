@@ -1,7 +1,6 @@
 import "./PaperCard.css";
 import type { Paper } from "../types/paper";
 import { Link } from "react-router-dom";
-import { useState } from "react";
 import { useSavedPapers } from "../context/SavedPapersContext";
 
 type PaperCardProps = {
@@ -15,9 +14,9 @@ function PaperCard({ paper }: PaperCardProps) {
     isPaperSaved,
   } = useSavedPapers();
 
-  const saved = isPaperSaved(paper.arxiv_id);
+  const isSaved = isPaperSaved(paper.arxiv_id);
   const handleSave = () => {
-    if (saved) {
+    if (isSaved) {
       removePaper(paper.arxiv_id);
     } else {
       savePaper(paper);
@@ -67,6 +66,14 @@ function PaperCard({ paper }: PaperCardProps) {
                     </span>
 
                 ))}
+            </div>
+            <div className="paper-actions">
+                <button
+                    className={`save-btn ${isSaved ? "saved" : ""}`}
+                    onClick={handleSave}
+                >
+                    {isSaved ? "❤️ Saved" : "🤍 Save"}
+                </button>
             </div>
         </div>
         <Link
