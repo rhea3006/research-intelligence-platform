@@ -57,3 +57,21 @@ class SearchResponse(BaseModel):
     limit: int
     total: int
     total_pages: int
+
+class HybridSearchResult(BaseModel):
+    arxiv_id: str
+    title: str
+    authors: str | None = None
+    categories: str
+    published_date: str | None = None
+
+    relevance_score: int
+    semantic_score: float
+    hybrid_score: float
+
+class HybridSearchResponse(BaseModel):
+    results: list[HybridSearchResult]
+    page: int
+    limit: int
+    total: int
+    total_pages: int

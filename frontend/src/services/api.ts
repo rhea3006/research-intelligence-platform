@@ -2,7 +2,7 @@ import type { SearchResponse } from "../types/paper";
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://127.0.0.1:8000",
+  baseURL: import.meta.env.VITE_API_URL,
 });
 
 export default api;
@@ -13,7 +13,7 @@ export async function searchPapers(
   author: string,
   year: string,
   sort: string,
-  page: number
+  page = 1
 ): Promise<SearchResponse> {
   const response = await api.get("/hybrid-search", {
     params: {

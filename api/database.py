@@ -116,11 +116,7 @@ def search_papers(q, limit, offset, category= None, author= None, year= None,
     cursor.close()
     conn.close()
 
-    if results:
-        print(results[0])
-    else:
-        print("No papers found.")
-        
+    print(f"Found {len(results)} papers")        
 
     return results, total
 
@@ -219,10 +215,11 @@ def get_all_embeddings():
     return results
 
 def semantic_search_db(query_embedding, limit=10):
-
+    """
+    Retrieve the nearest papers using pgvector
+    cosine similarity search.
+    """
     conn = get_connection()
-
-    register_vector(conn)
 
     cursor = conn.cursor()
 
@@ -232,7 +229,9 @@ def semantic_search_db(query_embedding, limit=10):
             arxiv_id,
             title,
             authors,
+            categories,
             published_date,
+            0 AS relevance_score,
             1 - (embedding_vector <=> %s::vector) AS similarity
         FROM papers
         WHERE embedding_vector IS NOT NULL

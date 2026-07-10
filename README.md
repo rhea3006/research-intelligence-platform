@@ -77,23 +77,31 @@ Filter search results by:
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠 Tech Stack
+
+### Frontend
+- React
+- TypeScript
+- Axios
+- CSS
 
 ### Backend
-- Python
 - FastAPI
-- Uvicorn
+- Python
+- APScheduler
 
 ### Database
 - PostgreSQL
-- psycopg2
+- Neon Database
+- pgvector
 
-### Data Source
-- arXiv API
+### AI / Search
+- Sentence Transformers (all-MiniLM-L6-v2)
+- Hybrid Search (Keyword + Semantic)
+- HNSW Vector Indexing
 
-### Version Control
-- Git
-- GitHub
+### Deployment
+- Render
 
 ---
 
@@ -123,54 +131,68 @@ research-intelligence-platform/
 
 ## 🏗️ System Architecture
 
-```text
-              arXiv API
-                  │
-                  ▼
-        Ingestion Pipeline
-                  │
-                  ▼
-          PostgreSQL Database
-                  │
-                  ▼
-            FastAPI Backend
-                  │
-     ┌────────────┼────────────┐
-     │            │            │
-     ▼            ▼            ▼
- Paper APIs   Search Engine  Recommendations
-                  │
-                  ▼
-        Relevance Ranking
-```
+
+                +----------------------+
+                |      React UI        |
+                +----------+-----------+
+                           |
+                           v
+                 FastAPI REST API
+                           |
+        +------------------+------------------+
+        |                                     |
+        v                                     v
+ Keyword Search                    Semantic Search
+ (ILIKE + Ranking)             (Sentence Transformers)
+        |                                     |
+        +------------------+------------------+
+                           |
+                    Hybrid Ranking
+                           |
+                           v
+                 PostgreSQL + pgvector
+                           |
+                           v
+                   Automated arXiv Ingestion
 
 ---
 
-## ✅ Current Progress
 
-### Implemented
-- ✅ Research paper ingestion
-- ✅ PostgreSQL database integration
-- ✅ FastAPI REST API
-- ✅ Intelligent keyword search
-- ✅ Relevance-based search ranking
-- ✅ Paper detail endpoint
-- ✅ Related paper recommendation engine
-- ✅ Search filtering
-- ✅ Automated ingestion pipeline
-- ✅ Backend architecture refactoring
+## ✨ Features
+
+- 🔍 Hybrid Search combining keyword and semantic retrieval
+- 🧠 Semantic Search powered by Sentence Transformers
+- ⚡ High-performance vector search using PostgreSQL + pgvector
+- 📚 Automated research paper ingestion from arXiv
+- 🗂 Advanced filtering by category, author, publication year, and relevance
+- 📄 Detailed paper pages with metadata and related papers
+- 🔄 Scheduled ingestion pipeline for keeping the database up to date
+- 🌐 RESTful API built with FastAPI
+- 💻 Modern React + TypeScript frontend
+
+---
+
+## 🔎 Search Pipeline
+
+The platform uses a hybrid retrieval approach:
+
+1. User submits a search query.
+2. Keyword search retrieves relevant papers using PostgreSQL text matching.
+3. The query is converted into a sentence embedding using Sentence Transformers.
+4. pgvector performs semantic nearest-neighbor search using cosine similarity.
+5. Keyword and semantic results are combined using weighted score fusion.
+6. The final ranked papers are returned to the frontend.
 
 ---
 
 ## 🔮 Upcoming Features
 
-- 🎨 Frontend web application
-- 🧠 Semantic search using vector embeddings
-- 🔀 Hybrid keyword + semantic search
-- 📊 Research analytics dashboard
-- ⭐ Bookmark & save papers
-- 🤖 Personalized recommendations
-- ☁️ Cloud deployment
+- User authentication
+- Saved papers & bookmarks
+- AI-generated paper summaries
+- Citation network visualization
+- Cross-encoder reranking
+- Personalized recommendations
 
 ---
 
