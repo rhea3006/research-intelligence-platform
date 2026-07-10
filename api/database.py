@@ -1,3 +1,4 @@
+from pgvector.psycopg2 import register_vector
 import psycopg2
 from dotenv import load_dotenv
 import os
@@ -7,7 +8,9 @@ load_dotenv()
 print("DATABASE_URL =", os.getenv("DATABASE_URL"))
 
 def get_connection():
-    return psycopg2.connect(os.getenv("DATABASE_URL"))
+    conn= psycopg2.connect(os.getenv("DATABASE_URL"))
+    register_vector(conn)
+    return conn
 
 def get_all_papers(limit,offset):
     conn=get_connection()
@@ -184,13 +187,19 @@ def get_papers_for_embedding():
 
     return results
 
-def update_embedding(arxiv_id, embedding):
+def update_embedding_vector(arxiv_id, embedding):
 
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("""UPDATE papers SET embedding = %s WHERE arxiv_id = %s""",
-                   (embedding, arxiv_id))
+    cursor.execute(
+        """
+        UPDATE papers
+        SET embedding_vector = %s
+        WHERE arxiv_id = %s
+        """,
+        (embedding, arxiv_id),
+    )
 
     conn.commit()
 
@@ -204,6 +213,37 @@ def get_all_embeddings():
                    WHERE embedding IS NOT NULL""")
 
     results = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    return results
+
+def semantic_search_db(query_embedding, limit=10):
+
+    conn = get_connection()
+
+    register_vector(conn)
+
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        SELECT
+            arxiv_id,
+            title,
+            authors,
+            published_date,
+            1 - (embedding_vector <=> %s::vector) AS similarity
+        FROM papers
+        WHERE embedding_vector IS NOT NULL
+        ORDER BY embedding_vector <=> %s::vector
+        LIMIT %s
+        """,
+        (query_embedding, query_embedding, limit)
+    )
+
+    results = cursor.fetchall()
+
     cursor.close()
     conn.close()
 

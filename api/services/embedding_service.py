@@ -1,5 +1,4 @@
-from sentence_transformers import SentenceTransformer
-from api.database import (get_papers_for_embedding,update_embedding, get_all_embeddings,)
+from api.database import (get_papers_for_embedding,update_embedding_vector,semantic_search_db,)
 from api.services.search_service import search_papers_service
 import numpy as np
 import json
@@ -9,6 +8,7 @@ model = None
 def get_model():
     global model
     if model is None:
+        from sentence_transformers import SentenceTransformer
         print("Loading embedding model...")
         model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
     return model
@@ -20,14 +20,8 @@ def cosine_similarity(a, b):
     return np.dot(a, b) / (np.linalg.norm(a) *np.linalg.norm(b))
 
 def create_paper_embedding(title, abstract):
-
     text = f"{title} {abstract}"
-
-    embedding = generate_embedding(text)
-
-    return json.dumps(
-        embedding.tolist()
-    )
+    return generate_embedding(text).tolist()
 
 def backfill_embeddings():
 
@@ -39,33 +33,31 @@ def backfill_embeddings():
         title = paper[1]
         abstract = paper[2]
         embedding = create_paper_embedding(title,abstract)
-        update_embedding(arxiv_id,embedding)
+        update_embedding_vector(arxiv_id, embedding)
         print(f"Embedded {arxiv_id}")
 
 
 def semantic_search(query):
-    query_embedding = generate_embedding(query)
-    papers = get_all_embeddings()
-    results = []
 
-    for paper in papers:
-        arxiv_id = paper[0]
-        title = paper[1]
-        authors = paper[2]
-        published_date = paper[3]
-        
-        if paper[4] is None:
-            continue
+    query_embedding = generate_embedding(query).tolist()
 
-        paper_embedding = np.array(json.loads(paper[4]))
+    results = semantic_search_db(query_embedding)
 
-        similarity = cosine_similarity( query_embedding, paper_embedding)
+    papers = []
 
-        results.append({"arxiv_id": arxiv_id,"title": title,"authors": authors,
-                        "published_date": str(published_date),"similarity": float(similarity)})
+    for row in results:
 
-    results.sort( key=lambda x: x["similarity"],reverse=True)
-    return results[:10]
+        papers.append(
+            {
+                "arxiv_id": row[0],
+                "title": row[1],
+                "authors": row[2],
+                "published_date": str(row[3]),
+                "similarity": float(row[4]),
+            }
+        )
+
+    return papers
 
 def hybrid_search(q,page=1,limit=10,category=None,author=None, year=None,
                   sort="relevance",):
@@ -86,30 +78,42 @@ def hybrid_search(q,page=1,limit=10,category=None,author=None, year=None,
     keyword_results = keyword_response["results"]
     semantic_results = semantic_search(q)
 
-    semantic_lookup = {}
-    for paper in semantic_results:
-        semantic_lookup[paper["arxiv_id"]] = paper["similarity"]
-
-    results = []
+    combined = {}
     for paper in keyword_results:
-        normalized_keyword = (paper["relevance_score"] / 8)
-        semantic_score = semantic_lookup.get( paper["arxiv_id"],0)
-        hybrid_score = (0.5 * normalized_keyword + 0.5 * semantic_score)
+        combined[paper["arxiv_id"]] = {
+            **paper,
+            "keyword_score": paper["relevance_score"] / 8,
+            "semantic_score": 0,
+        }
 
-        paper["semantic_score"] = semantic_score
-        paper["hybrid_score"] = hybrid_score
-        paper.pop("embedding", None)
-        results.append(paper)
+    for paper in semantic_results:
+        arxiv_id = paper["arxiv_id"]
+        if arxiv_id in combined:
+            combined[arxiv_id]["semantic_score"] = paper["similarity"]
 
-    results.sort(key=lambda x: x["hybrid_score"], reverse=True)
+        else:
+            combined[arxiv_id] = {
+                **paper,
+                "keyword_score": 0,
+                "semantic_score": paper["similarity"],
+            }
+    
+    print(len(keyword_results))
+    print(len(semantic_results))
+    print(len(combined))
 
-    return {
-        "results": results[:limit],
-        "page": page,
-        "limit": limit,
-        "total": keyword_response["total"],
-        "total_pages": keyword_response["total_pages"],
-    }
+    for paper in combined.values():
+        paper["hybrid_score"] = (
+            0.5 * paper["keyword_score"]
+            + 0.5 * paper["semantic_score"]
+        )
+
+    results = list(combined.values())
+    results.sort(key=lambda x: x["hybrid_score"],reverse=True,)
+
+    return {"results": results[:limit],"page": page,"limit": limit,
+            "total": len(results),"total_pages": (len(results) + limit - 1) // limit,}
+
 
 
 
