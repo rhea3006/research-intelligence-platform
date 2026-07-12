@@ -181,3 +181,20 @@
 .save-btn.saved {
     background: #ffebee;
 }
+
+.workspace-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.workspace-btn:hover {
+    transform: translateY(-1px);
+}
+
+.workspace-btn.selected {
+    background-color: #d1fae5;
+}

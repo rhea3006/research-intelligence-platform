@@ -1,0 +1,328 @@
+.workspace-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.workspace-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.workspace-header h1 {
+    font-size: 3.5rem;
+
+    font-weight: 700;
+
+    margin: 0;
+
+    line-height: 1.1;
+}
+
+.workspace-header p {
+    margin-top: 1rem;
+
+    font-size: 1.4rem;
+
+    color: #9ca3af;
+
+    line-height: 1.6;
+}
+
+.workspace-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.clear-workspace-btn {
+    cursor: pointer;
+}
+
+.remove-workspace-btn{
+    margin-left:2rem;
+    flex-shrink:0;
+    background:#ef4444;
+
+    color:white;
+
+    border:none;
+
+    border-radius:10px;
+
+    padding:.75rem 1.2rem;
+
+    font-size:.9rem;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.prompt-section {
+    margin-top: 3rem;
+}
+
+.prompt-section textarea {
+
+    width: 100%;
+
+    min-height: 140px;
+
+    max-height: 350px;
+
+    padding: 1rem;
+
+    margin-top: 1rem;
+
+    resize: none;
+
+    overflow-y: auto;
+
+    border-radius: 12px;
+
+    font-size: 1rem;
+
+    line-height: 1.6;
+
+    transition: height .15s ease;
+}
+
+.generate-btn {
+    margin-top: 1rem;
+}
+
+.response-section {
+    margin-top: 3rem;
+}
+
+.response-placeholder{
+
+    margin-top:1rem;
+
+    border:1px dashed rgba(255,255,255,.12);
+
+    border-radius:16px;
+
+    padding:3rem;
+
+    text-align:center;
+
+    color:#b0b8c5;
+
+    background:#1e2330;
+}
+
+.response-placeholder h3{
+
+    margin-bottom: .75rem;
+
+    color:#ffffff;
+
+}
+
+.response-placeholder p{
+
+    margin-bottom:.5rem;
+    color:#9ca3af;
+
+}
+
+.workspace-paper-list {
+    margin-top: 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #1e2330;
+    box-shadow:
+        0 8px 24px rgba(0,0,0,.18);
+}
+
+.workspace-paper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 1.5rem 2rem;
+
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.workspace-paper-meta{
+
+    display:flex;
+
+    gap:1.5rem;
+
+    margin-top:.8rem;
+
+    color:#9ca3af;
+
+    font-size:.85rem;
+}
+
+.workspace-paper-authors{
+
+    margin:.6rem 0;
+
+    color:#9ca3af;
+
+    line-height:1.5;
+}
+
+.prompt-subtitle {
+    margin-top: .5rem;
+    color: #6b7280;
+}
+
+.prompt-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem;
+    margin: 1rem 0;
+}
+
+.suggestion-btn {
+    border: 1px solid #d1d5db;
+    background: black;
+    border-radius: 999px;
+    padding: .6rem 1rem;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.suggestion-btn:hover {
+    background: #f3f4f6;
+}
+
+
+.empty-icon{
+    font-size:4rem;
+    margin-bottom:1rem;
+}
+
+.browse-btn{
+
+    display:inline-block;
+
+    margin-top:1.5rem;
+
+    padding:.9rem 1.6rem;
+
+    border-radius:12px;
+
+    text-decoration:none;
+
+    background:#6366f1;
+
+    color:white;
+
+    font-weight:600;
+
+    transition:.2s;
+}
+
+.browse-btn:hover{
+
+    background:#4f46e5;
+
+}
+
+.workspace-stats {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    flex: 1;
+
+    background: #1e2330;
+
+    border: 1px solid rgba(255,255,255,.08);
+
+    border-radius: 14px;
+
+    padding: 1.25rem;
+
+    text-align: center;
+}
+
+.stat-card h3 {
+    margin: 0;
+
+    font-size: 2rem;
+
+    color: #ffffff;
+}
+
+.stat-card p {
+    margin-top: .5rem;
+
+    color: #9ca3af;
+
+    font-size: .95rem;
+}
+
+.response-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:1rem;
+
+}
+
+.response-box{
+
+    background:#1e2330;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:16px;
+
+    min-height:260px;
+
+    padding:2rem;
+
+}
+
+.ai-response{
+
+    white-space:pre-wrap;
+
+    line-height:1.8;
+
+    color:#f3f4f6;
+
+}
+
+.copy-response-btn{
+
+    border:none;
+
+    background:#374151;
+
+    color:white;
+
+    padding:.7rem 1rem;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+}
+
+.copy-response-btn:hover{
+
+    background:#4b5563;
+
+}

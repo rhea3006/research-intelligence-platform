@@ -1,0 +1,52 @@
+.workspace-paper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 1.25rem 0;
+
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.workspace-paper-content {
+    flex: 1;
+}
+
+.workspace-paper-title {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.workspace-paper-authors {
+    margin: .5rem 0;
+    color: #6b7280;
+    font-size: .9rem;
+}
+
+.workspace-paper-meta {
+    display: flex;
+    gap: 1rem;
+
+    color: #9ca3af;
+    font-size: .85rem;
+}
+
+.remove-workspace-btn {
+    border: none;
+
+    background: #ef4444;
+
+    color: white;
+
+    padding: .6rem 1rem;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    transition: .2s;
+}
+
+.remove-workspace-btn:hover {
+    background: #dc2626;
+}

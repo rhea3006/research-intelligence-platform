@@ -2,6 +2,7 @@ import "./PaperCard.css";
 import type { Paper } from "../types/paper";
 import { Link } from "react-router-dom";
 import { useSavedPapers } from "../context/SavedPapersContext";
+import { useWorkspace } from "../context/WorkspaceContext";
 
 type PaperCardProps = {
   paper: Paper;
@@ -14,7 +15,15 @@ function PaperCard({ paper }: PaperCardProps) {
     isPaperSaved,
   } = useSavedPapers();
 
+  const {
+        addPaper,
+        removePaper: removeWorkspacePaper,
+        isPaperSelected,
+    } = useWorkspace();
+
+  const inWorkspace = isPaperSelected(paper.arxiv_id);
   const isSaved = isPaperSaved(paper.arxiv_id);
+
   const handleSave = () => {
     if (isSaved) {
       removePaper(paper.arxiv_id);
@@ -22,6 +31,14 @@ function PaperCard({ paper }: PaperCardProps) {
       savePaper(paper);
     }
   };
+  const handleWorkspace = () => {
+        if (inWorkspace) {
+            removeWorkspacePaper(paper.arxiv_id);
+        } else {
+            addPaper(paper);
+        }
+    };
+
   const formattedDate = paper.published_date
     ? new Date(paper.published_date).toLocaleDateString("en-US", {
         year: "numeric",
@@ -73,6 +90,16 @@ function PaperCard({ paper }: PaperCardProps) {
                     onClick={handleSave}
                 >
                     {isSaved ? "❤️ Saved" : "🤍 Save"}
+                </button>
+                <button
+                    className={`workspace-btn ${
+                        inWorkspace ? "selected" : ""
+                    }`}
+                    onClick={handleWorkspace}
+                >
+                    {inWorkspace
+                        ? "✔ Workspace"
+                        : "➕ Workspace"}
                 </button>
             </div>
         </div>
