@@ -75,3 +75,20 @@ class HybridSearchResponse(BaseModel):
     limit: int
     total: int
     total_pages: int
+
+class WorkspaceAnalysisRequest(BaseModel):
+    paper_ids: list[str]
+    prompt: str
+
+class WorkspacePaper(BaseModel):
+    arxiv_id: str
+    title: str
+    abstract: str
+    authors: str
+    categories: str
+    published_date: str | None = None
+
+
+class WorkspaceAnalysisResponse(BaseModel):
+    papers: list[WorkspacePaper]
+    prompt: str

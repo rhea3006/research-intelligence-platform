@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from ingestion.scheduler import (start_scheduler,stop_scheduler)
 from fastapi.middleware.cors import CORSMiddleware
-from api.routes import search_router, papers_router
+from api.routes import (search_router, papers_router, workspace_router)
 from contextlib import asynccontextmanager
 
 @asynccontextmanager
@@ -23,8 +23,8 @@ app = FastAPI(
 ) #object of FastAPI class, this will represent the entire backend application
 
 app.include_router(search_router)
-
 app.include_router(papers_router)
+app.include_router(workspace_router)
 
 app.add_middleware(CORSMiddleware,allow_origins=["http://localhost:5173",],allow_credentials=True,
     allow_methods=["*"],allow_headers=["*"],)

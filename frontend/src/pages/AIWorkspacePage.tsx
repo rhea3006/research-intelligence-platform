@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useWorkspace } from "../context/WorkspaceContext";
 import WorkspacePaper from "../components/WorkspacePaper";
+import PromptTemplates from "../components/PromptTemplates";
 import { Link } from "react-router-dom";
 import "./AIWorkspacePage.css";
 
@@ -12,16 +13,14 @@ function AIWorkspacePage() {
 
     const [prompt, setPrompt] = useState("");
     const [response, setResponse] = useState("");
-    const uniqueAuthors = new Set(
-        workspacePapers.flatMap((paper) =>
-            paper.authors.split(",").map((author) => author.trim())
-        )
-    ).size;
-    const uniqueCategories = new Set(
-        workspacePapers.flatMap((paper) =>
-            paper.categories.split(",").map((category) => category.trim())
-        )
-    ).size;
+    const [showAdvanced, setShowAdvanced] = useState(false);
+    const [analysisDepth, setAnalysisDepth] = useState("Standard");
+    const [writingStyle, setWritingStyle] =useState("Academic");
+    const [outputFormat, setOutputFormat] =useState("Structured Report");
+    const uniqueAuthors = new Set(workspacePapers.flatMap((paper) =>
+            paper.authors.split(",").map((author) => author.trim()))).size;
+    const uniqueCategories = new Set(workspacePapers.flatMap((paper) =>
+            paper.categories.split(",").map((category) => category.trim()))).size;
     const suggestedPrompts = [
     "Compare the methodologies used in these papers.",
     "Summarize the key contributions of each paper.",
@@ -109,8 +108,12 @@ function AIWorkspacePage() {
                             </button>
                           ))}
                         </div>
+                        <PromptTemplates
+                            onSelect={(selectedPrompt) =>
+                                setPrompt(selectedPrompt)
+                            }
+                        />
                         <textarea
-                          placeholder="Example: Compare the methodologies of these papers and explain which approach is likely to generalize better."
                           value={prompt}
                           onChange={(e) => setPrompt(e.target.value)}
                           onInput={(e) => {
@@ -119,6 +122,85 @@ function AIWorkspacePage() {
                              `${e.currentTarget.scrollHeight}px`;
                           }}
                         />
+                        <button
+                            className="advanced-toggle"
+                            onClick={() => setShowAdvanced(!showAdvanced)}
+                        >
+                            {showAdvanced ? "▼" : "▶"} Advanced Settings
+                        </button>
+                        {showAdvanced && (
+                            <div className="advanced-panel">
+                                <div className="setting-group">
+                                    <label>Analysis Depth</label>
+                                    <div className="segment-control">
+                                        {["Brief", "Standard", "Comprehensive"].map((depth) => (
+                                            <button
+                                                key={depth}
+                                                type="button"
+                                                className={`segment-btn ${
+                                                    analysisDepth === depth ? "active" : ""
+                                                }`}
+                                                onClick={() => setAnalysisDepth(depth)}
+                                            >
+                                                {depth}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="setting-group">
+
+                                    <label>Writing Style</label>
+
+                                    <div className="segment-control">
+
+                                        {["Academic", "Beginner Friendly", "Technical"].map((style) => (
+
+                                            <button
+                                                key={style}
+                                                type="button"
+                                                className={`segment-btn ${
+                                                    writingStyle === style ? "active" : ""
+                                                }`}
+                                                onClick={() => setWritingStyle(style)}
+                                            >
+                                                {style}
+                                            </button>
+
+                                        ))}
+
+                                    </div>
+
+                                </div>
+                                <div className="setting-group">
+
+                                    <label>Output Format</label>
+
+                                    <div className="segment-control">
+
+                                        {[
+                                            "Structured Report",
+                                            "Bullet Points",
+                                            "Comparison Table",
+                                        ].map((format) => (
+
+                                            <button
+                                                key={format}
+                                                type="button"
+                                                className={`segment-btn ${
+                                                    outputFormat === format ? "active" : ""
+                                                }`}
+                                                onClick={() => setOutputFormat(format)}
+                                            >
+                                                {format}
+                                            </button>
+
+                                        ))}
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        )}
                         <button
                           className="generate-btn"
                             disabled={

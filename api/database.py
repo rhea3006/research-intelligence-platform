@@ -247,3 +247,34 @@ def semantic_search_db(query_embedding, limit=10):
     conn.close()
 
     return results
+
+def get_workspace_papers(arxiv_ids: list[str]):
+    """
+    Fetch the papers selected in the AI Workspace.
+    Returns only the fields required for AI analysis.
+    """
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        SELECT
+            arxiv_id,
+            title,
+            abstract,
+            authors,
+            categories,
+            published_date
+        FROM papers
+        WHERE arxiv_id = ANY(%s)
+        """,
+        (arxiv_ids,),
+    )
+
+    results = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return results
