@@ -34,3 +34,4 @@ def home(): # fastAPI knows whenver we have a GET call, go to home function
     return{"message": "Research Intelligence Platform API"} # FastAPI automatically converts dictionaries into JSON, so it sends it back to the browser.
 
 
+

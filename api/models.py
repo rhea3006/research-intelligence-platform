@@ -92,3 +92,11 @@ class WorkspacePaper(BaseModel):
 class WorkspaceAnalysisResponse(BaseModel):
     papers: list[WorkspacePaper]
     prompt: str
+
+class PaperSummaryRequest(BaseModel):
+    arxiv_id: str
+
+class PaperSummaryResponse(BaseModel):
+    arxiv_id: str
+    title: str
+    summary: str

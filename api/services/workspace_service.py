@@ -1,6 +1,7 @@
-from api.database import get_workspace_papers
+from api.services.llm_service import llm
+from api.database import (get_workspace_papers,get_paper_by_id)
 from api.models import (WorkspaceAnalysisRequest,WorkspaceAnalysisResponse,WorkspacePaper,)
-from api.services.ai_service import build_prompt
+from api.services.ai_service import (build_prompt,build_summary_prompt)
 
 
 def analyze_workspace_service(request: WorkspaceAnalysisRequest,):
@@ -26,3 +27,16 @@ def analyze_workspace_service(request: WorkspaceAnalysisRequest,):
         papers=workspace_papers,
         prompt=request.prompt,
     )
+
+def summarize_paper_service(arxiv_id: str):
+    paper = get_paper_by_id(arxiv_id)
+
+    if not paper:
+        raise ValueError("Paper not found")
+    
+    title = paper[2]
+    abstract = paper[3] 
+    prompt = build_summary_prompt(title, abstract)
+    summary = llm.generate_response(prompt)
+
+    return {"arxiv_id": arxiv_id, "title": title, "summary": summary,}

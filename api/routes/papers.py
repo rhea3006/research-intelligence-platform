@@ -37,3 +37,4 @@ def download_paper(arxiv_id: str):
 
     return StreamingResponse( BytesIO(response.content),media_type="application/pdf",
                              headers={"Content-Disposition":f'attachment; filename="{arxiv_id}.pdf"'},)
+
