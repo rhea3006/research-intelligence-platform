@@ -36,3 +36,11 @@ export const getPaper = async (arxivId: string) => {
     return response.data;
 
 };
+
+export const summarizePaper = async (arxivId: string) => {
+    const response = await api.post("/workspace/summarize", {
+        arxiv_id: arxivId,
+    });
+
+    return response.data;
+};

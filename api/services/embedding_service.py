@@ -7,10 +7,17 @@ model = None
 
 def get_model():
     global model
+
     if model is None:
         from sentence_transformers import SentenceTransformer
+
         print("Loading embedding model...")
-        model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+
+        model = SentenceTransformer(
+            "sentence-transformers/all-MiniLM-L6-v2",
+            local_files_only=True,
+        )
+
     return model
 
 def generate_embedding(text):

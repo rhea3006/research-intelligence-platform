@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getPaper } from "../services/api";
 import type { PaperDetail } from "../types/paper";
 import type { Paper } from "../types/paper";
 import PaperCard from "../components/PaperCard";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { getPaper, summarizePaper } from "../services/api";
+import ReactMarkdown from "react-markdown";
 import "./PaperDetailsPage.css";
 
 
@@ -13,11 +14,13 @@ function PaperDetailsPage() {
     // Read the ID from the URL
     const { arxiv_id } = useParams();
 
-    // State
+    //  Component States 
     const [paper, setPaper] = useState<PaperDetail | null>(null);
     const [relatedPapers, setRelatedPapers] = useState<Paper[]>([]);
     const [linkCopied, setLinkCopied] = useState(false);
     const [copyMessage, setCopyMessage] = useState("");
+    const [aiResponse, setAiResponse] = useState("");
+    const [loadingAI, setLoadingAI] = useState(false);
     const [error, setError] = useState("");
 
     // 👇 ADD useEffect RIGHT HERE
@@ -45,6 +48,26 @@ function PaperDetailsPage() {
     fetchPaper();
 
     }, [arxiv_id]);
+
+    const handleSummarize = async () => {
+    if (!paper) return;
+
+    setLoadingAI(true);
+    setAiResponse("");
+
+    try {
+        const result = await summarizePaper(paper.arxiv_id);
+
+        setAiResponse(result.summary);
+    } catch (error) {
+        console.error(error);
+        setAiResponse(
+            "Sorry, something went wrong while generating the summary."
+        );
+    } finally {
+        setLoadingAI(false);
+    }
+};
 
     
     if (error) {
@@ -165,6 +188,36 @@ function PaperDetailsPage() {
                 <h2>Abstract</h2>
 
                 <p>{paper.abstract}</p>
+            </section>
+            <section className="ai-section">
+                <div className="ai-header">
+                    <h2>🤖 AI Research Assistant</h2>
+                    <p>
+                        Generate an AI-powered understanding of this paper in one click.
+                    </p>
+                    <button
+                        className="action-btn ai-btn"
+                        onClick={handleSummarize}
+                        disabled={loadingAI}
+                    >
+                        {loadingAI
+                            ? "Generating Summary..."
+                            : "📝 Generate AI Summary"}
+                    </button>
+                </div>
+                {aiResponse && (
+                    <div className="ai-response">
+
+                        <h3>✨ AI Summary</h3>
+
+                        <div className="markdown-content">
+                            <ReactMarkdown>
+                                {aiResponse}
+                            </ReactMarkdown>
+                        </div>
+
+                    </div>
+                )}
             </section>
             <section className="related-section">
                 <h2>Related Papers</h2>

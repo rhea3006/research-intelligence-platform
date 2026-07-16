@@ -52,16 +52,29 @@ def build_summary_prompt(title: str, abstract: str):
 
     Summarize the following research paper.
 
-    Title:
+    Return your answer in Markdown.
+
+    Paper Title:
     {title}
 
     Abstract:
     {abstract}
 
-    Instructions:
-    - Keep the summary under 200 words.
-    - Explain the problem the paper solves.
-    - Explain the proposed solution.
-    - Mention why the work is important.
-    - Use clear, simple language.
+    Use EXACTLY these headings:
+
+    # Overview
+
+    # Method
+
+    # Key Contributions
+
+    # Results
+
+    # Why It Matters
+
+    Rules:
+    - Keep the summary under 300 words.
+    - Explain technical concepts clearly.
+    - Do not invent information not present in the abstract.
+    - Write concise, professional paragraphs.
     """
