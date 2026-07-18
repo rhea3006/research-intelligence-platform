@@ -1,3 +1,10 @@
+/* ==========================================================
+   PAPER DETAILS PAGE
+   ========================================================== */
+
+/* ==========================================================
+   PAGE LAYOUT
+   ========================================================== */
 .paper-page {
     padding: 50px 20px;
 }
@@ -16,6 +23,11 @@
     box-shadow: 0 8px 25px rgba(0,0,0,.25);
 }
 
+/* ==========================================================
+   PAGE TITLE
+   ========================================================== */
+
+
 .paper-title {
     font-size: 2.3rem;
 
@@ -23,8 +35,103 @@
 
     margin-bottom: 30px;
 
-    color: white;
+    color:#ffffff;
 }
+
+/* ==========================================================
+   SECTION DIVIDERS
+   ========================================================== */
+.section-divider{
+
+    border:none;
+
+    height:1px;
+
+    background:rgba(255,255,255,.08);
+
+    margin:2rem 0;
+
+}
+
+/* ==========================================================
+   METADATA CARDS
+   ========================================================== */
+
+.paper-meta-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:1rem;
+    margin:2rem 0;
+    margin-bottom:2.5rem;
+}
+
+.meta-card{
+
+    display:flex;
+    align-items:flex-start;
+    gap:1rem;
+
+    background:#2e3440;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:16px;
+
+    padding:1.25rem;
+
+    transition:.2s ease;
+
+}
+.meta-card:hover{
+
+    border-color:#4f8cff;
+
+    transform:translateY(-2px);
+
+}
+.meta-card svg{
+
+    color:#d6def0;
+
+    flex-shrink:0;
+
+}
+
+.meta-label{
+
+    display:block;
+
+    font-size: .78rem;
+
+    color:#8b95a7;
+
+    text-transform:uppercase;
+
+    letter-spacing:.12em;
+
+    margin-bottom:.35rem;
+
+}
+
+.meta-card p{
+
+    margin:0;
+
+    color:white;
+
+    line-height:1.5;
+    font-size:1.3rem;
+
+    font-weight:500;
+
+    margin-top:.4rem;
+
+}
+
+/* ==========================================================
+   LEGACY METADATA (Can Remove Later)
+   ========================================================== */
+
 
 .paper-meta {
     display: flex;
@@ -42,6 +149,10 @@
     color: white;
 }
 
+/* ==========================================================
+   ABSTRACT
+   ========================================================== */
+
 .abstract-section {
     border-top: 1px solid #444;
 
@@ -57,6 +168,10 @@
 
     color: #d7d7d7;
 }
+
+/* ==========================================================
+   BACK BUTTON
+   ========================================================== */
 
 .back-button {
     margin-bottom: 30px;
@@ -75,6 +190,10 @@
 .back-button:hover {
     text-decoration: underline;
 }
+
+/* ==========================================================
+   RELATED PAPERS
+   ========================================================== */
 
 .related-section{
 
@@ -96,6 +215,11 @@
 
 }
 
+/* ==========================================================
+   ACTION BUTTONS
+   ========================================================== */
+
+
 .paper-actions {
 
     display: flex;
@@ -105,38 +229,67 @@
     gap: 15px;
 
     margin: 35px 0;
+    margin-bottom:2.5rem;
+
+}
+.paper-tabs{
+
+    margin-bottom:1rem;
 
 }
 
 .action-btn {
-
-    background: #4f8cff;
-
     color: white;
-
-    border: none;
-
-    border-radius: 10px;
-
-    padding: 12px 20px;
-
     text-decoration: none;
 
-    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
 
-    transition: 0.2s ease;
+    padding: 0.9rem 1.4rem;
+
+    border-radius: 12px;
 
     font-size: 0.95rem;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    width: auto;
+    flex: none;
+}
+
+
+.secondary-btn {
+
+    background:#2f3542;
+
+    color:white;
+
+    border:1px solid rgba(255,255,255,.08);
 
 }
 
-.action-btn:hover {
+.secondary-btn:hover{
 
-    background: #6aa0ff;
+    background:#353b49;
 
-    transform: translateY(-2px);
+    border-color:#4f8cff;
+
+    transform:translateY(-2px);
 
 }
+
+.paper-actions{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:1rem;
+    margin:2rem 0;
+}
+
 
 .copy-message {
     color: #7ee787;
@@ -145,6 +298,10 @@
 
     font-weight: 600;
 }
+
+/* ==========================================================
+   AI SUMMARY
+   ========================================================== */
 
 .ai-section{
     margin-top:50px;
@@ -228,6 +385,11 @@
     margin-bottom:18px;
 
 }
+
+/* ==========================================================
+   MARKDOWN CONTENT
+   ========================================================== */
+
 
 .markdown-content{
 
@@ -369,4 +531,66 @@
 
     margin-bottom: 0;
 
+}
+
+/* ==========================================================
+   TABS
+   ========================================================== */
+
+.paper-tabs-section {
+    margin: 2rem 0;
+}
+
+.paper-tabs {
+    display: flex;
+    gap: 2rem;
+    border-bottom: 1px solid #384155;
+    margin: 2rem 0 1.5rem;
+     margin-bottom:.75rem;
+}
+
+.paper-tabs button {
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: #9ca3af;
+    padding: 0.9rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.paper-tabs button:hover {
+    color: #ffffff;
+}
+.paper-tabs .active-tab {
+    color: #4f8cff;
+    border-bottom-color: #4f8cff;
+}
+.tab-content {
+    animation: fadeIn 0.2s ease;
+    margin-top:0;
+}
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==========================================================
+   SHARED UTILITIES
+   ========================================================== */
+
+.paper-tabs button,
+.action-btn,
+.paper-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
 }

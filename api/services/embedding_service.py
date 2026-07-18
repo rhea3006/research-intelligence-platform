@@ -105,13 +105,16 @@ def hybrid_search(q,page=1,limit=10,category=None,author=None,year=None,sort="re
             "semantic_score": 0,
         }
 
-    # Merge semantic results
+    SEMANTIC_THRESHOLD = 0.70
+
     for paper in semantic_results:
+        if paper["similarity"] < SEMANTIC_THRESHOLD:
+            continue
+
         arxiv_id = paper["arxiv_id"]
 
         if arxiv_id in combined:
             combined[arxiv_id]["semantic_score"] = paper["similarity"]
-
         else:
             combined[arxiv_id] = {
                 **paper,

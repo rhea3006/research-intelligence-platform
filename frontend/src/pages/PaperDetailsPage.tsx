@@ -7,6 +7,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import { getPaper, summarizePaper } from "../services/api";
 import ReactMarkdown from "react-markdown";
 import "./PaperDetailsPage.css";
+import {Users,CalendarDays,Tag,Globe,FileDown,Copy,Share2,FileText,Sparkles,} from "lucide-react";
 
 
 function PaperDetailsPage() {
@@ -15,6 +16,7 @@ function PaperDetailsPage() {
     const { arxiv_id } = useParams();
 
     //  Component States 
+    const [activeTab, setActiveTab] = useState<"abstract" | "summary">("abstract");
     const [paper, setPaper] = useState<PaperDetail | null>(null);
     const [relatedPapers, setRelatedPapers] = useState<Paper[]>([]);
     const [linkCopied, setLinkCopied] = useState(false);
@@ -85,6 +87,12 @@ function PaperDetailsPage() {
     }
 
     const pdfUrl = paper.arxiv_url.replace("/abs/", "/pdf/") + ".pdf";
+    const formatDate = (date: string) =>
+    new Date(date).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+    });
 
     // Main UI
     return (
@@ -102,41 +110,52 @@ function PaperDetailsPage() {
             <h1 className="paper-title">
                 {paper.title}
             </h1>
+            <div className="paper-meta-grid">
+                <div className="meta-card">
+                    <Users size={18} />
+                    <div>
+                        <span className="meta-label">Authors</span>
+                        <p>{paper.authors}</p>
+                    </div>
+                </div>
 
-            <div className="paper-meta">
+                <div className="meta-card">
+                    <CalendarDays size={18} />
+                    <div>
+                        <span className="meta-label">Published</span>
+                        <p>{formatDate(paper.published_date)}</p>
+                    </div>
+                </div>
 
-                <p>
-                👤 <strong>Authors:</strong> {paper.authors}
-                </p>
-
-                <p>
-                📅 <strong>Published:</strong> {paper.published_date}
-                </p>
-
-                <p>
-                🏷️ <strong>Categories:</strong> {paper.categories}
-                </p>
-
+                <div className="meta-card">
+                    <Tag size={18} />
+                    <div>
+                        <span className="meta-label">Categories</span>
+                        <p>{paper.categories}</p>
+                    </div>
+                </div>
             </div>
-            <div className="paper-actions">
+            <div className="action-btn secondary-btn">
                 <a
                     href={paper.arxiv_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="action-btn"
+                    className="action-btn secondary-btn"
                 >
-                    🌐 View on arXiv
+                    <Globe size={18} />
+                        <span>View on arXiv</span>
                 </a>
                 <a
                     href={`https://research-intelligence-platform.onrender.com/papers/${paper.arxiv_id}/download`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="action-btn"
+                    className="action-btn secondary-btn"
                 >
-                    📑 Download PDF
+                    <FileDown size={18} />
+                        <span>Download PDF</span>   
                 </a>
                 <button
-                    className="action-btn"
+                    className="action-btn secondary-btn"
                     onClick={() => {
                         navigator.clipboard.writeText(
                         `${paper.authors}
@@ -144,14 +163,15 @@ function PaperDetailsPage() {
                         arXiv: ${paper.arxiv_id}
                         Published: ${paper.published_date}`
                         );
-                        setCopyMessage("✅ Citation copied!");
+                        setCopyMessage("Citation copied!");
                         setTimeout(() => setCopyMessage(""), 2000);
                     }}
                     >
-                    📋 Copy Citation
+                    <Copy size={18} />
+                        <span>Copy Citation</span>
                 </button>
                 <button
-                    className="action-btn"
+                    className="action-btn secondary-btn"
                     onClick={async () => {
                         const url = window.location.href;
                         try {
@@ -170,9 +190,12 @@ function PaperDetailsPage() {
                         }
                     }}
                 >
-                    🔗 Share
+                    <Share2 size={18} />
+                        <span>Share</span>
                 </button>
             </div>
+            <hr className="section-divider" />
+
             {copyMessage && (
                 <p className="copy-message">
                     {copyMessage}
@@ -183,41 +206,60 @@ function PaperDetailsPage() {
                     🔗 Link copied!
                 </p>
             )}
-            <section className="abstract-section">
-
-                <h2>Abstract</h2>
-
-                <p>{paper.abstract}</p>
-            </section>
-            <section className="ai-section">
-                <div className="ai-header">
-                    <h2>🤖 AI Research Assistant</h2>
-                    <p>
-                        Generate an AI-powered understanding of this paper in one click.
-                    </p>
+            <section className="paper-tabs-section">
+                <div className="paper-tabs">
                     <button
-                        className="action-btn ai-btn"
-                        onClick={handleSummarize}
-                        disabled={loadingAI}
+                        className={activeTab === "abstract" ? "active-tab" : ""}
+                        onClick={() => setActiveTab("abstract")}
                     >
-                        {loadingAI
-                            ? "Generating Summary..."
-                            : "📝 Generate AI Summary"}
+                        <FileText size={18} />
+                            <span>Abstract</span>
+                    </button>
+
+                    <button
+                        className={activeTab === "summary" ? "active-tab" : ""}
+                        onClick={() => setActiveTab("summary")}
+                    >
+                        <Sparkles size={18} />
+                            <span>AI Summary</span>
                     </button>
                 </div>
-                {aiResponse && (
-                    <div className="ai-response">
-
-                        <h3>✨ AI Summary</h3>
-
-                        <div className="markdown-content">
-                            <ReactMarkdown>
-                                {aiResponse}
-                            </ReactMarkdown>
-                        </div>
-
+                {activeTab === "abstract" && (
+                    <div className="tab-content">
+                        <h2>Abstract</h2>
+                        <p>{paper.abstract}</p>
                     </div>
                 )}
+                {activeTab === "summary" && (
+                    <div className="tab-content">
+                        <div className="ai-header">
+                            <h2>🤖 AI Research Assistant</h2>
+                            <p>
+                                Generate an AI-powered understanding of this paper.
+                            </p>
+                            <button
+                                className="action-btn ai-btn"
+                                onClick={handleSummarize}
+                                disabled={loadingAI}
+                            >
+                                {loadingAI
+                                    ? "Generating Summary..."
+                                    : "📝 Generate AI Summary"}
+                            </button>
+                        </div>
+                        {aiResponse && (
+                            <div className="ai-response">
+                                <h3>✨ AI Summary</h3>
+                                <div className="markdown-content">
+                                    <ReactMarkdown>
+                                        {aiResponse}
+                                    </ReactMarkdown>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
+
             </section>
             <section className="related-section">
                 <h2>Related Papers</h2>

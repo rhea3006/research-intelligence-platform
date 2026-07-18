@@ -9,7 +9,6 @@ import SearchFilters from "../components/SearchFilters";
 import LoadingSpinner from "../components/LoadingSpinner";
 import Pagination from "../components/Pagination";
 
-
 function HomePage() {
     const [query, setQuery] = useState("");
     const [papers, setPapers] = useState<Paper[]>([]);
