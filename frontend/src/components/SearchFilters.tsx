@@ -1,3 +1,5 @@
+import "./SearchFilters.css"
+
 type SearchFiltersProps = {
   category: string;
   setCategory: React.Dispatch<React.SetStateAction<string>>;
