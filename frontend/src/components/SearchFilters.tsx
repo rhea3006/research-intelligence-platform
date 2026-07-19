@@ -1,4 +1,6 @@
 import "./SearchFilters.css"
+import {Tag,User,CalendarDays,ArrowUpDown,} from "lucide-react";
+
 
 type SearchFiltersProps = {
   category: string;
@@ -26,46 +28,50 @@ function SearchFilters({
 }: SearchFiltersProps) {
   return (
   <section className="filters">
+    <div className="filter-input-wrapper">
+      <Tag size={16} className="filter-icon" />
 
-    <input
-      className="filter-input"
-      placeholder="📂 Category"
-      value={category}
-      onChange={(e) => setCategory(e.target.value)}
-    />
+      <input
+          className="filter-input"
+          placeholder="Category"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+      />
+    </div>
 
-    <input
-      className="filter-input"
-      placeholder="👤 Author"
-      value={author}
-      onChange={(e) => setAuthor(e.target.value)}
-    />
+    <div className="filter-input-wrapper">
+        <User size={16} className="filter-icon" />
 
-    <input
-      className="filter-input"
-      placeholder="📅 Year"
-      value={year}
-      onChange={(e) => setYear(e.target.value)}
-    />
+        <input
+            className="filter-input"
+            placeholder="Author"
+            value={author}
+            onChange={(e) => setAuthor(e.target.value)}
+        />
+    </div>
+    <div className="filter-input-wrapper">
+        <CalendarDays size={16} className="filter-icon" />
 
-    <select
-      className="filter-select"
-      value={sort}
-      onChange={(e) => setSort(e.target.value)}
-    >
-      <option value="relevance">
-        ⭐ Relevance
-      </option>
+        <input
+            className="filter-input"
+            placeholder="Year"
+            value={year}
+            onChange={(e) => setYear(e.target.value)}
+        />
+    </div>
+    <div className="filter-select-wrapper">
+      <ArrowUpDown size={16} className="filter-icon" />
 
-      <option value="newest">
-        🆕 Newest
-      </option>
-
-      <option value="oldest">
-        🕰️ Oldest
-      </option>
-    </select>
-
+      <select
+          className="filter-select"
+          value={sort}
+          onChange={(e) => setSort(e.target.value)}
+      >
+          <option value="relevance">Relevance</option>
+          <option value="newest">Newest</option>
+          <option value="oldest">Oldest</option>
+      </select>
+    </div>
   </section>
 );
 }

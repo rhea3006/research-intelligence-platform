@@ -3,6 +3,8 @@ import type { Paper } from "../types/paper";
 import { Link } from "react-router-dom";
 import { useSavedPapers } from "../context/SavedPapersContext";
 import { useWorkspace } from "../context/WorkspaceContext";
+import {Users,CalendarDays,Heart,FolderPlus,FolderCheck,ArrowRight,} from "lucide-react";
+
 
 type PaperCardProps = {
   paper: Paper;
@@ -59,37 +61,52 @@ function PaperCard({ paper }: PaperCardProps) {
                     {paper.title}
                 </h3>
             </Link>
-
-            <p className="paper-authors">
-                👤 {paper.authors
-                    .split(",")
-                    .slice(0, 3)
-                    .join(", ")}
-                {paper.authors.split(",").length > 3 && " et al."}
-            </p>
-
             <div className="paper-meta">
-                <span>📅 {formattedDate}</span>
-            </div>
-
-            <div className="category-list">
-                {paper.categories ?.split(",").slice(0, 3) .map((category) => (
-                    <span
-                     key={category}
-                    className="category-badge"
-            >
-                {category.trim()}
-
+                <div className="paper-meta-item">
+                    <Users size={15} />
+                    <span>
+                        {paper.authors
+                            .split(",")
+                            .slice(0, 3)
+                            .join(", ")}
+                        {paper.authors.split(",").length > 3 && " et al."}
                     </span>
+                </div>
 
-                ))}
+                <div className="paper-meta-item">
+                    <CalendarDays size={15} />
+                    <span>{formattedDate}</span>
+                </div>
+            </div>
+            <div className="paper-footer">
+
+                <div className="category-list">
+                    {paper.categories
+                        ?.split(",")
+                        .slice(0,3)
+                        .map(category => (
+                            <span
+                                key={category}
+                                className="category-badge"
+                            >
+                                {category.trim()}
+                            </span>
+                    ))}
+                </div>
             </div>
             <div className="paper-actions">
                 <button
                     className={`save-btn ${isSaved ? "saved" : ""}`}
                     onClick={handleSave}
                 >
-                    {isSaved ? "❤️ Saved" : "🤍 Save"}
+                    <>
+                        <Heart
+                            size={18}
+                            fill={isSaved ? "currentColor" : "none"}
+                        />
+
+                        {isSaved ? "Saved" : "Save"}
+                    </>
                 </button>
                 <button
                     className={`workspace-btn ${
@@ -97,9 +114,17 @@ function PaperCard({ paper }: PaperCardProps) {
                     }`}
                     onClick={handleWorkspace}
                 >
-                    {inWorkspace
-                        ? "✔ Workspace"
-                        : "➕ Workspace"}
+                    <>
+                        {inWorkspace ? (
+                            <FolderCheck size={18} />
+                        ) : (
+                            <FolderPlus size={18} />
+                        )}
+
+                        {inWorkspace
+                            ? "Added"
+                            : "Workspace"}
+                    </>
                 </button>
             </div>
         </div>
@@ -107,7 +132,11 @@ function PaperCard({ paper }: PaperCardProps) {
             to={`/paper/${paper.arxiv_id}`}
             className="view-btn"
         >
-            View Details →
+            <>
+                View Details
+
+                <ArrowRight size={18}/>
+            </>
         </Link>
 
     </div>

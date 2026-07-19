@@ -10,7 +10,7 @@
 
     display:grid;
 
-    grid-template-columns:1fr auto;
+    grid-template-columns:1fr auto auto;
 
     gap:12px;
 }
@@ -92,15 +92,13 @@
 .search-btn,
 .clear-btn{
 
+    width:130px;
+
     height:56px;
-
-    min-width:110px;
-
-    padding:0 1.5rem;
 
     border-radius:18px;
 
-    font-size:1.1rem;
+    font-size:1.05rem;
 
     font-weight:600;
 }
@@ -137,4 +135,19 @@
     max-width:1450px;
 
     margin:2.5rem auto;
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.search-btn:disabled,
+.clear-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
 }

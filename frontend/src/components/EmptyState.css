@@ -1,0 +1,65 @@
+.empty-state {
+    max-width: 600px;
+    margin: 80px auto;
+    text-align: center;
+    color: #c7c7c7;
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.empty-state h2 {
+    color: white;
+    margin-bottom: 1rem;
+}
+
+.empty-state p {
+    color: #9ca3af;
+    line-height: 1.7;
+}
+
+.empty-suggestions {
+    margin-top: 2rem;
+    text-align: left;
+    display: inline-block;
+}
+
+.empty-suggestions h4 {
+    color: white;
+    margin-bottom: .75rem;
+}
+
+.empty-suggestions ul {
+    margin: 0;
+    padding-left: 1.25rem;
+}
+
+.empty-suggestions li {
+    margin-bottom: .5rem;
+    color: #b8bec9;
+}
+
+.empty-action-btn {
+    margin-top: 2rem;
+
+    background: #4f8cff;
+    color: white;
+
+    border: none;
+    border-radius: 10px;
+
+    padding: 12px 22px;
+
+    cursor: pointer;
+
+    transition:
+        background-color .2s ease,
+        transform .2s ease;
+}
+
+.empty-action-btn:hover {
+    background: #3f7ff7;
+    transform: translateY(-2px);
+}

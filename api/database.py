@@ -61,7 +61,7 @@ def search_papers(q, limit, offset, category= None, author= None, year= None,
     else:
         order_by = "relevance_score DESC"
 
-    query="""SELECT arxiv_id,title,authors,categories,published_date,
+    query="""SELECT arxiv_id,title,abstract,authors,categories,published_date,
         (CASE
             WHEN title ILIKE %s THEN 4
             ELSE 0

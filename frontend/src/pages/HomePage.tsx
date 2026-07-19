@@ -1,4 +1,5 @@
 import '../App.css'
+import "./HomePage.css";
 import { useEffect, useState } from "react";
 import HeroSection from "../components/HeroSection";
 import SearchBar from "../components/SearchBar";
@@ -7,7 +8,11 @@ import type { Paper } from "../types/paper";
 import PaperCard from "../components/PaperCard";
 import SearchFilters from "../components/SearchFilters";
 import LoadingSpinner from "../components/LoadingSpinner";
+import EmptyState from "../components/EmptyState";
 import Pagination from "../components/Pagination";
+import ActiveFilters from '../components/ActiveFilters';
+import PaperCardSkeleton from "../components/PaperCardSkeleton";
+import { Search, SearchX } from "lucide-react";
 
 function HomePage() {
   const [query, setQuery] = useState("");
@@ -33,6 +38,7 @@ function HomePage() {
     try {
       const response = await searchPapers(query,category,author,year,sort,
         pageNumber);
+      console.log(response.results);
       setPapers(response.results);
       setTotalPages(response.total_pages);
       setTotalResults(response.total);
@@ -49,6 +55,13 @@ function HomePage() {
       window.scrollTo({top: 0,behavior: "smooth",});
     }
   }, [page]);
+
+  useEffect(() => {
+    if (!hasSearched) return;
+
+    setPage(1);
+    handleSearch(1);
+  }, [category, author, year, sort]);
 
   const handlePrevious = () => {
     if (page > 1) {
@@ -70,6 +83,7 @@ function HomePage() {
           <HeroSection />
           <SearchBar
             query={query}
+            loading={loading}
             setQuery={setQuery}
             onSearch={() => {
               setPage(1);
@@ -87,28 +101,46 @@ function HomePage() {
             sort={sort}
             setSort={setSort}
           />
+          <ActiveFilters
+              category={category}
+              author={author}
+              year={year}
+              setCategory={setCategory}
+              setAuthor={setAuthor}
+              setYear={setYear}
+          />
           {error && (
             <div className="error-banner">
               ⚠️ {error}
             </div>
           )}
           {loading ? (
-            <LoadingSpinner />
+            <section className="results-section">
+                <div className="results">
+                    {Array.from({ length: 6 }).map((_, index) => (
+                        <PaperCardSkeleton key={index} />
+                    ))}
+                </div>
+            </section>
         ) : !hasSearched ? (
-            <div className="empty-state">
-                <h2>🔍 Search for research papers</h2>
-                <p>
-                    Enter a keyword above to discover AI and Machine Learning
-                    research papers.
-                </p>
-            </div>
+            <EmptyState
+                icon={<Search size={60} strokeWidth={1.6} />}
+                title="Search for research papers"
+                description="Enter a keyword above to discover AI and Machine Learning research papers."
+            />
         ) : papers.length === 0 ? (
-            <div className="empty-state">
-                <h2>😔 No papers found</h2>
-                <p>
-                    Try another keyword or broaden your search.
-                </p>
-            </div>
+            <EmptyState
+                  icon={<SearchX size={60} strokeWidth={1.6} />}
+                  title="No matching papers found"
+                  description="We couldn't find any papers matching your search."
+                  showSuggestions
+                  hasFilters={Boolean(category || author || year)}
+                  onClearFilters={() => {
+                      setCategory("");
+                      setAuthor("");
+                      setYear("");
+                  }}
+              />
         ) : (
               <section className="results-section">
                 <h2 className="results-heading">
@@ -126,7 +158,8 @@ function HomePage() {
                         paper={paper}
                     />
                   ))}
-                  {papers.length > 0 && (
+                </div>
+                {papers.length > 0 && (
                     <Pagination
                       page={page}
                       totalPages={totalPages}
@@ -134,7 +167,6 @@ function HomePage() {
                       onNext={handleNext}
                       />
                   )}
-                </div>
             </section>
           )}
           </div>

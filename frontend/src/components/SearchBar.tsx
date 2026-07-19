@@ -6,10 +6,11 @@ type SearchBarProps = {
   setQuery: React.Dispatch<React.SetStateAction<string>>;
   onSearch: () => void;
   onClear: () => void;
+  loading: boolean;
 };
 
 
-function SearchBar({query,setQuery,onSearch,onClear}: SearchBarProps){
+function SearchBar({query,setQuery,onSearch,onClear,loading}: SearchBarProps){
   return (
   <section className="search-section">
 
@@ -26,7 +27,7 @@ function SearchBar({query,setQuery,onSearch,onClear}: SearchBarProps){
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               onKeyDown={(event) => {
-                  if (event.key === "Enter") {
+                  if (event.key === "Enter" && !loading) {
                       onSearch();
                   }
               }}
@@ -37,17 +38,19 @@ function SearchBar({query,setQuery,onSearch,onClear}: SearchBarProps){
       <button
           className="search-btn"
           onClick={onSearch}
+          disabled={loading}
       >
-          Search
+          {loading ? "Searching..." : "Search"}
       </button>
 
       {query && (
-          <button
-              className="clear-btn"
-              onClick={onClear}
-          >
-              Clear
-          </button>
+        <button
+          className="clear-btn"
+          onClick={onClear}
+          disabled={loading}
+      >
+          Clear
+      </button>
       )}
 
     </div>

@@ -1,0 +1,70 @@
+.skeleton {
+    background: linear-gradient(
+        90deg,
+        #2d313a 25%,
+        #3a404d 50%,
+        #2d313a 75%
+    );
+
+    background-size: 200% 100%;
+
+    animation: shimmer 1.4s infinite;
+
+    border-radius: 8px;
+}
+
+@keyframes shimmer {
+
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+
+}
+
+.skeleton-title{
+    height:24px;
+    width:90%;
+    margin-bottom:18px;
+}
+
+.skeleton-authors{
+    height:16px;
+    width:60%;
+    margin-bottom:18px;
+}
+
+.skeleton-line{
+    height:14px;
+    margin-bottom:10px;
+}
+
+.skeleton-line.short{
+    width:70%;
+}
+
+.skeleton-chip-row{
+    display:flex;
+    gap:8px;
+    margin:18px 0;
+}
+
+.skeleton-chip{
+    width:70px;
+    height:26px;
+    border-radius:999px;
+}
+
+.skeleton-date{
+    width:120px;
+    height:14px;
+    margin-bottom:20px;
+}
+
+.skeleton-button{
+    margin-top:auto;
+    height:42px;
+}

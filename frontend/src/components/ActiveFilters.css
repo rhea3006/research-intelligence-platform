@@ -1,0 +1,83 @@
+.active-filters{
+
+    width:100%;
+    max-width:1450px;
+
+    margin:20px auto 0;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:16px;
+
+    flex-wrap:wrap;
+}
+
+.filter-chips{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:12px;
+}
+
+.filter-chip{
+
+    background:#242733;
+
+    color:#ffffff;
+
+    border:1px solid #353949;
+
+    border-radius:999px;
+
+    padding:8px 14px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+    font-size:.9rem;
+}
+
+.filter-chip:hover{
+
+    background:#2d3140;
+
+    border-color:#5b6cff;
+}
+
+.filter-chip span{
+
+    opacity:.7;
+}
+
+.clear-filters{
+
+    background:none;
+
+    border:none;
+
+    color:#7c93ff;
+
+    cursor:pointer;
+
+    font-weight:600;
+
+    transition:.2s;
+}
+
+.clear-filters:hover{
+
+    color:white;
+}
