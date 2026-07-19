@@ -46,35 +46,83 @@ def build_prompt(papers, user_prompt):
     5. Final Recommendation
     """
 
-def build_summary_prompt(title: str, abstract: str):
+def build_summary_prompt(title: str, abstract: str) -> str:
     return f"""
-    You are an expert research assistant.
+You are an expert AI research assistant helping researchers quickly evaluate academic papers.
 
-    Summarize the following research paper.
+Your task is to analyze the following paper and produce a structured research brief.
 
-    Return your answer in Markdown.
+The response MUST be written in Markdown.
 
-    Paper Title:
-    {title}
+Use the following headings exactly.
 
-    Abstract:
-    {abstract}
+# Executive Summary
 
-    Use EXACTLY these headings:
+Provide a concise overview of the paper in 2–3 paragraphs.
 
-    # Overview
+---
 
-    # Method
+# Key Contributions
 
-    # Key Contributions
+List 3–5 major contributions as bullet points.
 
-    # Results
+---
 
-    # Why It Matters
+# Methodology
 
-    Rules:
-    - Keep the summary under 300 words.
-    - Explain technical concepts clearly.
-    - Do not invent information not present in the abstract.
-    - Write concise, professional paragraphs.
-    """
+Explain:
+- The approach used
+- Models or techniques employed
+- Dataset (if mentioned)
+- Evaluation strategy
+
+---
+
+# Main Findings
+
+Summarize the most important results and conclusions.
+
+---
+
+# Practical Applications
+
+List real-world applications of this research.
+
+If not explicitly mentioned, infer reasonable applications based on the paper.
+
+---
+
+# Limitations
+
+Mention limitations, assumptions, or potential weaknesses.
+
+If none are explicitly stated, infer likely limitations based on the methodology.
+
+---
+
+# Future Research Directions
+
+Suggest future work based on the paper.
+
+If the paper already mentions future work, include it.
+
+Otherwise infer logical research directions.
+
+---
+
+Paper Title:
+{title}
+
+Abstract:
+{abstract}
+
+
+Guidelines:
+
+- Keep the response under 700 words.
+- Be objective and factual.
+- Do not invent claims unsupported by the abstract.
+- When information is missing, clearly state that it is not specified rather than guessing.
+- Use concise bullet points wherever appropriate.
+- Do not repeat information across sections.
+"""

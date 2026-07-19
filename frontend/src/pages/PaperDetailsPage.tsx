@@ -7,7 +7,8 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import { getPaper, summarizePaper } from "../services/api";
 import ReactMarkdown from "react-markdown";
 import "./PaperDetailsPage.css";
-import {Users,CalendarDays,Tag,Globe,FileDown,Copy,Share2,FileText,Sparkles,} from "lucide-react";
+import {Users,CalendarDays,Tag,Globe,FileDown,Copy,Share2,FileText,Sparkles,
+    CheckCircle2} from "lucide-react";
 
 
 function PaperDetailsPage() {
@@ -25,7 +26,7 @@ function PaperDetailsPage() {
     const [loadingAI, setLoadingAI] = useState(false);
     const [error, setError] = useState("");
 
-    // 👇 ADD useEffect RIGHT HERE
+    // ADD useEffect RIGHT HERE
     useEffect(() => {
         window.scrollTo({
         top: 0,
@@ -110,29 +111,18 @@ function PaperDetailsPage() {
             <h1 className="paper-title">
                 {paper.title}
             </h1>
-            <div className="paper-meta-grid">
-                <div className="meta-card">
-                    <Users size={18} />
-                    <div>
-                        <span className="meta-label">Authors</span>
+            <div className="paper-meta">
+                <div className="meta-item meta-authors">
+                    <Users size={16} />
                         <p>{paper.authors}</p>
-                    </div>
                 </div>
-
-                <div className="meta-card">
-                    <CalendarDays size={18} />
-                    <div>
-                        <span className="meta-label">Published</span>
+                <div className="meta-item">
+                    <CalendarDays size={16} />
                         <p>{formatDate(paper.published_date)}</p>
-                    </div>
                 </div>
-
-                <div className="meta-card">
-                    <Tag size={18} />
-                    <div>
-                        <span className="meta-label">Categories</span>
+                <div className="meta-item">
+                    <Tag size={16} />
                         <p>{paper.categories}</p>
-                    </div>
                 </div>
             </div>
             <div className="action-btn secondary-btn">
@@ -207,17 +197,20 @@ function PaperDetailsPage() {
                 </p>
             )}
             <section className="paper-tabs-section">
-                <div className="paper-tabs">
+                <div className="segmented-control">
                     <button
-                        className={activeTab === "abstract" ? "active-tab" : ""}
+                        className={`segment-btn ${
+                            activeTab === "abstract" ? "active" : ""
+                        }`}
                         onClick={() => setActiveTab("abstract")}
                     >
                         <FileText size={18} />
                             <span>Abstract</span>
                     </button>
-
                     <button
-                        className={activeTab === "summary" ? "active-tab" : ""}
+                        className={`segment-btn ${
+                            activeTab === "summary" ? "active" : ""
+                        }`}
                         onClick={() => setActiveTab("summary")}
                     >
                         <Sparkles size={18} />
@@ -233,18 +226,48 @@ function PaperDetailsPage() {
                 {activeTab === "summary" && (
                     <div className="tab-content">
                         <div className="ai-header">
-                            <h2>🤖 AI Research Assistant</h2>
+                            <div className="ai-title">
+                                <Sparkles size={24} />
+                                <h2>AI Insights</h2>
+                            </div>
                             <p>
-                                Generate an AI-powered understanding of this paper.
+                                Understand this paper instantly with AI-generated insights.
                             </p>
+                            <div className="ai-preview-list">
+                                <div className="preview-item">
+                                    <CheckCircle2 size={18} />
+                                     Key Contributions
+                                </div>
+
+                                <div className="preview-item">
+                                    <CheckCircle2 size={18} />
+                                     Methodology Overview
+                                </div>
+
+                                <div className="preview-item">
+                                    <CheckCircle2 size={18} />
+                                     Main Findings
+                                </div>
+
+                                <div className="preview-item">
+                                    <CheckCircle2 size={18} />
+                                    Practical Applications
+                                </div>
+                            </div>
                             <button
                                 className="action-btn ai-btn"
                                 onClick={handleSummarize}
                                 disabled={loadingAI}
                             >
-                                {loadingAI
-                                    ? "Generating Summary..."
-                                    : "📝 Generate AI Summary"}
+                                <>
+                                    <Sparkles size={18} />
+
+                                    <span>
+                                        {loadingAI
+                                            ? "Generating..."
+                                            : "Generate AI Insights"}
+                                    </span>
+                                </>
                             </button>
                         </div>
                         {aiResponse && (
