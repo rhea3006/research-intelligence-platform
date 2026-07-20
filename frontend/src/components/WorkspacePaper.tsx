@@ -4,9 +4,11 @@ import { useWorkspace } from "../context/WorkspaceContext";
 
 type WorkspacePaperProps = {
     paper: Paper;
+    isSelected: boolean;
+    onToggle: () => void;
 };
 
-function WorkspacePaper({ paper }: WorkspacePaperProps) {
+function WorkspacePaper({ paper,isSelected,onToggle }: WorkspacePaperProps) {
 
     const { removePaper } = useWorkspace();
 
@@ -20,7 +22,11 @@ function WorkspacePaper({ paper }: WorkspacePaperProps) {
 
     return (
         <div className="workspace-paper">
-
+            <input
+                type="checkbox"
+                checked={isSelected}
+                onChange={onToggle}
+            />
             <div className="workspace-paper-content">
 
                 <h3 className="workspace-paper-title">

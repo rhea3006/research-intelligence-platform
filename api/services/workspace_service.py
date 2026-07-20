@@ -20,13 +20,24 @@ def analyze_workspace_service(request: WorkspaceAnalysisRequest,):
             )
         )
     
-    prompt = build_prompt(workspace_papers,request.prompt,)
-    print(prompt)
-
-    return WorkspaceAnalysisResponse(
+    prompt = build_prompt(
         papers=workspace_papers,
-        prompt=request.prompt,
+        analysis_type=request.analysis_type,
+        additional_prompt=request.additional_prompt,
+        analysis_depth=request.analysis_depth,
+        writing_style=request.writing_style,
+        output_format=request.output_format,
     )
+    
+    try:
+        analysis = llm.generate_response(prompt)
+
+    except Exception as e:
+        raise RuntimeError(
+            f"Failed to generate workspace analysis: {e}"
+        )
+
+    return WorkspaceAnalysisResponse(analysis=analysis,)
 
 def summarize_paper_service(arxiv_id: str):
     paper = get_paper_by_id(arxiv_id)

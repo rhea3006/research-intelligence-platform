@@ -4,9 +4,11 @@
     padding: 2rem;
 }
 
-.workspace-header {
-    text-align: center;
-    margin-bottom: 3rem;
+.workspace-heading{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:14px;
 }
 
 .workspace-header h1 {
@@ -91,8 +93,72 @@
     transition: height .15s ease;
 }
 
+.textarea-label{
+
+    display:block;
+
+    margin-top:1.5rem;
+
+    margin-bottom:.75rem;
+
+    font-size:1rem;
+
+    font-weight:600;
+
+    color:#ffffff;
+
+}
+
+.textarea-label span{
+
+    color:#94a3b8;
+
+    font-weight:500;
+
+}
+
+.validation-message{
+
+    margin-top:1rem;
+
+    margin-bottom:.75rem;
+
+    color:#fbbf24;
+
+    font-size:.9rem;
+
+    font-weight:500;
+
+}
+
 .generate-btn {
     margin-top: 1rem;
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:10px;
+}
+
+.spinner{
+
+    animation: spin 1s linear infinite;
+
+}
+
+@keyframes spin{
+
+    from{
+        transform:rotate(0deg);
+    }
+
+    to{
+        transform:rotate(360deg);
+    }
+
 }
 
 .response-section {
@@ -279,6 +345,12 @@
 
 }
 
+.response-header h2{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
 .response-box{
 
     background:#1e2330;
@@ -319,6 +391,12 @@
 
     transition:.2s;
 
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
 }
 
 .copy-response-btn:hover{
@@ -327,7 +405,9 @@
 
 }
 
-/* ---------- Prompt Templates ---------- */
+/* ==========================================================
+   PROMPT TEMPLATES
+   ========================================================== */
 
 .prompt-templates {
     margin-bottom: 1.5rem;
@@ -357,7 +437,9 @@
     font-weight: 600;
 }
 
-/* ---------- Prompt Template Cards ---------- */
+/* ==========================================================
+   PROMPT TEMPLATE CARDS
+   ========================================================== */
 
 .template-grid {
     display: grid;
@@ -455,7 +537,9 @@
     font-weight:600;
 }
 
-/* ---------- Advanced Settings ---------- */
+/* ==========================================================
+   ADVANCED SETTINGS
+   ========================================================== */
 
 .advanced-toggle {
 
@@ -493,7 +577,9 @@
     border-color: #3b82f6;
 }
 
-/* ---------- Advanced Settings Panel ---------- */
+/* ==========================================================
+   ADVANCED SETTINGS PANEL
+   ========================================================== */
 
 .advanced-panel {
 
@@ -562,7 +648,9 @@
 
     box-shadow: 0 0 0 3px rgba(59,130,246,.15);
 }
-/* ---------- Segmented Controls ---------- */
+/* ==========================================================
+   SEGMENTED CONTROLS
+   ========================================================== */
 
 .segment-control {
 
@@ -620,4 +708,132 @@
     border-color: #2563eb;
 
     box-shadow: 0 0 12px rgba(37,99,235,.35);
+}
+
+/* ==========================================================
+   ANALYSIS TYPE SELECTOR
+   ========================================================== */
+
+.analysis-selector {
+    margin: 2rem 0;
+}
+
+.analysis-header {
+    margin-bottom: 1rem;
+}
+
+.analysis-header h3 {
+    margin: 0;
+    color: white;
+}
+
+.analysis-header p {
+    margin-top: .5rem;
+    color: #94a3b8;
+}
+
+.analysis-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+    gap: 1rem;
+}
+
+.analysis-card {
+
+    background:#1f2937;
+
+    display:flex;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    min-height: 180px;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:16px;
+
+    padding:20px;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+    text-align:left;
+
+    color:white;
+}
+
+.analysis-card:hover{
+
+    border-color:#3b82f6;
+
+    transform:translateY(-3px);
+
+    background:#263446;
+
+}
+
+.analysis-card.active{
+
+    border:2px solid #3b82f6;
+
+    background:#1e3a8a;
+
+    box-shadow:0 0 20px rgba(59,130,246,.3);
+
+}
+
+.analysis-icon {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 48px;
+
+    height: 48px;
+
+    border-radius: 12px;
+
+    background: rgba(59,130,246,.12);
+
+    color: #4f8cff;
+
+    margin-bottom: 16px;
+
+    transition: all .25s ease;
+}
+.analysis-card.active .analysis-icon {
+
+    background: rgba(255,255,255,.12);
+
+    color: white;
+
+}
+.analysis-card:hover .analysis-icon {
+
+    transform: scale(1.08);
+
+}
+
+.analysis-card h4{
+
+    margin:0;
+
+    margin-bottom:.5rem;
+
+}
+
+.analysis-card p{
+
+    color:#cbd5e1;
+
+    line-height:1.5;
+
+    font-size:.92rem;
+
 }

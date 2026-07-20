@@ -44,3 +44,35 @@ export const summarizePaper = async (arxivId: string) => {
 
     return response.data;
 };
+
+export type AnalysisType =
+    | "compare"
+    | "literature_review"
+    | "research_gap"
+    | "beginner";
+
+export interface AnalyzeWorkspaceRequest {
+    paper_ids: string[];
+    analysis_type: AnalysisType;
+    additional_prompt: string;
+    analysis_depth: string;
+    writing_style: string;
+    output_format: string;
+}
+
+export interface AnalyzeWorkspaceResponse {
+    analysis: string;
+}
+
+
+export const analyzeWorkspace = async (
+    request: AnalyzeWorkspaceRequest
+): Promise<AnalyzeWorkspaceResponse> => {
+
+    const response = await api.post(
+        "/workspace/analyze",
+        request
+    );
+
+    return response.data;
+};

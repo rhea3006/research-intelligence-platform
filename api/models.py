@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Literal
 from datetime import date
 
 class PaperSummary(BaseModel):
@@ -70,7 +71,20 @@ class HybridSearchResponse(BaseModel):
 
 class WorkspaceAnalysisRequest(BaseModel):
     paper_ids: list[str]
-    prompt: str
+    analysis_type: Literal[ "compare", "literature_review", "research_gap", 
+                           "beginner",]
+
+    additional_prompt: str = ""
+
+    analysis_depth: str
+
+    writing_style: str
+
+    output_format: str
+
+class WorkspaceAnalysisResponse(BaseModel):
+     analysis: str
+
 
 class WorkspacePaper(BaseModel):
     arxiv_id: str
@@ -80,11 +94,6 @@ class WorkspacePaper(BaseModel):
     categories: str
     published_date: str | None = None
 
-
-class WorkspaceAnalysisResponse(BaseModel):
-    papers: list[WorkspacePaper]
-    prompt: str
-
 class PaperSummaryRequest(BaseModel):
     arxiv_id: str
 
@@ -92,3 +101,4 @@ class PaperSummaryResponse(BaseModel):
     arxiv_id: str
     title: str
     summary: str
+
