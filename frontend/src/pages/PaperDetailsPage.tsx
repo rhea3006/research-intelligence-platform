@@ -6,11 +6,10 @@ import type { Paper } from "../types/paper";
 import PaperCard from "../components/PaperCard";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { getPaper, summarizePaper } from "../services/api";
-import ReactMarkdown from "react-markdown";
+import MarkdownRenderer from "../components/MarkdownRenderer/MarkdownRenderer";
 import "./PaperDetailsPage.css";
 import {Users,CalendarDays,Tag,Globe,FileDown,Copy,Share2,FileText,Sparkles,
-    CheckCircle2,Target,Cpu,BarChart3,Lightbulb,AlertTriangle,Compass,
-    Key,icons,Icon} from "lucide-react";
+    CheckCircle2,} from "lucide-react";
 
 
 function PaperDetailsPage() {
@@ -27,16 +26,6 @@ function PaperDetailsPage() {
     const [aiResponse, setAiResponse] = useState("");
     const [loadingAI, setLoadingAI] = useState(false);
     const [error, setError] = useState("");
-
-    const headingIcons: Record<string, ReactNode> = {
-        "executive summary": <FileText size={20} />,
-        "key contributions": <Target size={20} />,
-        "methodology": <Cpu size={20} />,
-        "main findings": <BarChart3 size={20} />,
-        "practical applications": <Lightbulb size={20} />,
-        "limitations": <AlertTriangle size={20} />,
-        "future research directions": <Compass size={20} />,
-    };
 
     // ADD useEffect RIGHT HERE
     useEffect(() => {
@@ -286,34 +275,7 @@ function PaperDetailsPage() {
                             <div className="ai-response">
                                 <h3>✨ AI Summary</h3>
                                 <div className="markdown-content">
-                                   <ReactMarkdown
-                                        components={{
-                                            h1: ({ children }) => {
-                                                const title = String(children).trim();
-                                                const key = title.toLowerCase();
-
-                                                return (
-                                                    <div className="ai-section-heading">
-                                                        {headingIcons[key]}
-                                                        <h2>{title}</h2>
-                                                    </div>
-                                                );
-                                            },
-                                            ul: ({ children }) => (
-                                                <ul className="ai-list">{children}</ul>
-                                            ),
-
-                                            li: ({ children }) => (
-                                                <li className="ai-list-item">{children}</li>
-                                            ),
-
-                                            p: ({ children }) => (
-                                                <p className="ai-paragraph">{children}</p>
-                                            ),
-                                        }}
-                                    >
-                                        {aiResponse}
-                                    </ReactMarkdown>
+                                   <MarkdownRenderer content={aiResponse} />
                                 </div>
                             </div>
                         )}

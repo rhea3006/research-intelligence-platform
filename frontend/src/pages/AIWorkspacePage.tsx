@@ -7,9 +7,12 @@ import type { AnalysisType } from "../services/api";
 import { Link } from "react-router-dom";
 import { useRef } from "react";
 import "./AIWorkspacePage.css";
-import ReactMarkdown from "react-markdown";
 import { BrainCircuit, FileText, Users, Tags, Sparkles, Bot, Copy,
-    LoaderCircle} from "lucide-react";
+    LoaderCircle, GitCompare, Target, Search, GraduationCap, Compass, ClipboardPen,
+    BarChart3, Zap, Scale, Settings2,Sigma, ChevronUp,PenTool,
+     ChevronDown, Trash2, PencilLine, Info} from "lucide-react";
+import MarkdownRenderer from "../components/MarkdownRenderer/MarkdownRenderer";
+import QuickPromptCard from "../components/QuickPromptCard";
 
 
 function AIWorkspacePage() {
@@ -40,6 +43,39 @@ function AIWorkspacePage() {
         "Identify common research gaps across these papers.",
         "Explain these papers as if I'm a beginner.",
         "What future research directions do these papers suggest?",
+    ];
+
+    const quickPrompts = [
+        {
+            icon: <GitCompare size={22} />,
+            title: "Compare Papers",
+            description: "Compare methodologies and approaches",
+            prompt: "Compare the methodologies used in these papers.",
+        },
+        {
+            icon: <Target size={22} />,
+            title: "Key Contributions",
+            description: "Summarize the main contributions",
+            prompt: "Summarize the key contributions of each paper.",
+        },
+        {
+            icon: <Search size={22} />,
+            title: "Research Gaps",
+            description: "Identify missing opportunities",
+            prompt: "Identify common research gaps across these papers.",
+        },
+        {
+            icon: <GraduationCap size={22} />,
+            title: "Beginner Mode",
+            description: "Explain everything simply",
+            prompt: "Explain these papers as if I'm a beginner.",
+        },
+        {
+            icon: <Compass size={22} />,
+            title: "Future Directions",
+            description: "Suggest future research",
+            prompt: "What future research directions do these papers suggest?",
+        },
     ];
 
     const togglePaperSelection = (paperId: string) => {
@@ -175,13 +211,14 @@ function AIWorkspacePage() {
                         </div>
                     </div>
                     <div className="workspace-title">
-                        <h2>
-                            Selected Papers ({selectedPaperIds.length} of {workspacePapers.length})
-                        </h2>
-                        <button
-                            className="clear-workspace-btn"
-                            onClick={clearWorkspace}
-                        >
+                        <div>
+                            <h2>Selected Papers</h2>
+                            <p className="selected-paper-subtitle">
+                                {selectedCount} of {workspacePapers.length} selected
+                            </p>
+                        </div>
+                        <button className="clear-workspace-btn">
+                            <Trash2 size={16}/>
                             Clear Workspace
                         </button>
                     </div>
@@ -197,55 +234,68 @@ function AIWorkspacePage() {
                     </div>
                 </section>
                 <section className="prompt-section">
-                    <h2>Configure Analysis</h2>
+                    <h2>AI Analysis Studio</h2>
                     <p className="prompt-subtitle">
                         Choose an analysis type and optionally provide additional instructions.
                     </p>
-                    <div className="prompt-suggestions">
-                        {suggestedPrompts.map((suggestion) => (
-                            <button
-                              key={suggestion}
-                              className="suggestion-btn"
-                              onClick={() => setPrompt(suggestion)}
-                            >
-                              {suggestion}
-                            </button>
+                    <div className="quick-prompts-grid">
+                        {quickPrompts.map((item) => (
+                            <QuickPromptCard
+                                key={item.title}
+                                icon={item.icon}
+                                title={item.title}
+                                description={item.description}
+                                selected={prompt === item.prompt}
+                                onClick={() => setPrompt(item.prompt)}
+                            />
                         ))}
                     </div>
                     <AnalysisTypeSelector
                         selected={analysisType}
                         onSelect={setAnalysisType}
                     />
-                    <label className="textarea-label">
-                        Additional Instructions <span>(Optional)</span>
-                    </label>
-                    <textarea
-                        value={prompt}
-                        onChange={(e) => setPrompt(e.target.value)}
-                        placeholder={`Example:
-                            • Focus on evaluation metrics
+                    <div className="analysis-header">
+                        <h3>Customize the Analysis</h3>
 
-                            • Compare computational efficiency
-
-                            • Ignore related work
-
-                            • Highlight reproducibility`}
-                        onInput={(e) => {
-                            e.currentTarget.style.height = "auto";
-                            e.currentTarget.style.height =
-                            `${e.currentTarget.scrollHeight}px`;
-                        }}
-                    />
-                    <button
-                        className="advanced-toggle"
-                        onClick={() => setShowAdvanced(!showAdvanced)}
-                    >
-                        {showAdvanced ? "▼" : "▶"} Advanced Settings
-                    </button>
+                        <p>
+                            Add any specific requests that aren't already covered by the selected analysis type.
+                        </p>
+                    </div>
+                    <div className="prompt-builder-card">
+                        <textarea
+                            className="instructions-textarea"
+                            value={prompt}
+                            onChange={(e) => setPrompt(e.target.value)}
+                            maxLength={500}
+                            placeholder={`Tell the AI anything unique you'd like it to consider...`}
+                            onInput={(e) => {
+                                e.currentTarget.style.height = "auto";
+                                e.currentTarget.style.height =
+                                    `${e.currentTarget.scrollHeight}px`;
+                            }}
+                        />
+                        <div className="instruction-footer">
+                            <span className="instruction-tip">
+                                <Info size={14} />
+                                Describe anything that isn't already specified above.
+                            </span>
+                            <span className="character-count">
+                                {prompt.length}/500
+                            </span>
+                        </div>
+                    </div>              
                     {showAdvanced && (
                         <div className="advanced-panel">
+
                             <div className="setting-group">
-                                <label>Analysis Depth</label>
+                                <div className="setting-title">
+                                    <BarChart3 size={18}/>
+                                    <div>
+                                        <h4>Analysis Depth</h4>
+                                        <p>Control the level of detail in the response.</p>
+                                    </div>
+                                </div>
+
                                 <div className="segment-control">
                                     {["Brief", "Standard", "Comprehensive"].map((depth) => (
                                         <button
@@ -261,15 +311,24 @@ function AIWorkspacePage() {
                                     ))}
                                 </div>
                             </div>
+
                             <div className="setting-group">
-                                <label>Writing Style</label>
+                                <div className="setting-title">
+                                    <PenTool size={18}/>
+                                    <div>
+                                        <h4>Writing Style</h4>
+                                        <p>Choose how the AI should communicate.</p>
+                                    </div>
+                                </div>
+
                                 <div className="segment-control">
                                     {["Academic", "Beginner Friendly", "Technical"].map((style) => (
                                         <button
                                             key={style}
                                             type="button"
                                             className={`segment-btn ${
-                                            writingStyle === style ? "active" : ""}`}
+                                                writingStyle === style ? "active" : ""
+                                            }`}
                                             onClick={() => setWritingStyle(style)}
                                         >
                                             {style}
@@ -278,9 +337,16 @@ function AIWorkspacePage() {
                                 </div>
                             </div>
                             <div className="setting-group">
-                                <label>Output Format</label>
+                                <div className="setting-title">
+                                    <FileText size={18}/>
+                                    <div>
+                                        <h4>Output Format</h4>
+                                        <p>Select how results should be structured.</p>
+                                    </div>
+                                </div>
                                 <div className="segment-control">
-                                    {[ "Structured Report",
+                                    {[
+                                        "Structured Report",
                                         "Bullet Points",
                                         "Comparison Table",
                                     ].map((format) => (
@@ -288,7 +354,8 @@ function AIWorkspacePage() {
                                             key={format}
                                             type="button"
                                             className={`segment-btn ${
-                                            outputFormat === format ? "active" : ""}`}
+                                                outputFormat === format ? "active" : ""
+                                            }`}
                                             onClick={() => setOutputFormat(format)}
                                         >
                                             {format}
@@ -296,33 +363,56 @@ function AIWorkspacePage() {
                                     ))}
                                 </div>
                             </div>
+
                         </div>
                     )}
+
                     {validationMessage && (
                         <p className="validation-message">
                             {validationMessage}
                         </p>
                     )}
-                    <button
-                        className="generate-btn"
-                        onClick={handleGenerate}
-                        disabled={validationMessage !== "" || isGenerating}
-                    >
-                        {isGenerating ? (
-                            <>
-                                <LoaderCircle
-                                    size={18}
-                                    className="spinner"
-                                />
-                                Generating...
-                            </>
-                        ) : (
-                            <>
-                                <Sparkles size={18} />
-                                Generate Analysis
-                            </>
-                        )}
-                    </button>
+
+                    <div className="action-bar">
+
+                        <button
+                            className="generate-btn"
+                            onClick={handleGenerate}
+                            disabled={validationMessage !== "" || isGenerating}
+                        >
+                            {isGenerating ? (
+                                <>
+                                    <LoaderCircle
+                                        size={18}
+                                        className="spinner"
+                                    />
+                                    Analyzing Papers...
+                                </>
+                            ) : (
+                                <>
+                                    <Sparkles size={18}/>
+                                    Generate AI Analysis
+                                </>
+                            )}
+                        </button>
+
+                        <button
+                            className={`advanced-toggle ${
+                                showAdvanced ? "active" : ""
+                            }`}
+                            onClick={() => setShowAdvanced(!showAdvanced)}
+                        >
+                            <Settings2 size={18}/>
+                            Advanced
+
+                            {showAdvanced ? (
+                                <ChevronUp size={16}/>
+                            ) : (
+                                <ChevronDown size={16}/>
+                            )}
+                        </button>
+
+                    </div>
                 </section>
                 <section 
                     ref={responseRef}
@@ -345,9 +435,7 @@ function AIWorkspacePage() {
                     <div className="response-box">
                         {response ? (
                             <div className="ai-response">
-                                <ReactMarkdown>
-                                    {response}
-                                </ReactMarkdown>
+                                <MarkdownRenderer content={response} />
                             </div>
                         ) : (
                             <div className="response-placeholder">
