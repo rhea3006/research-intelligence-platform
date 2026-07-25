@@ -1,8 +1,9 @@
 import type { SearchResponse } from "../types/paper";
+import axios from "axios";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL;
-
-export default API_BASE;
+const API_BASE = axios.create({
+    baseURL: import.meta.env.VITE_API_BASE_URL,
+});
 
 export async function searchPapers(
   query: string,
