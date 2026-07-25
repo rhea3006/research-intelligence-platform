@@ -2,16 +2,17 @@ import { useState,useEffect} from "react";
 import { useWorkspace } from "../context/WorkspaceContext";
 import WorkspacePaper from "../components/WorkspacePaper";
 import AnalysisTypeSelector from "../components/AnalysisTypeSelector";
-import { analyzeWorkspace} from "../services/api";
+import { analyzeWorkspace,saveAnalysis} from "../services/api";
 import type { AnalysisType } from "../services/api";
 import { Link } from "react-router-dom";
 import { useRef } from "react";
 import "./AIWorkspacePage.css";
 import { BrainCircuit, FileText, Users, Tags, Sparkles, Bot, Copy,
-    LoaderCircle, GitCompare, Target, Search, GraduationCap, Compass, ClipboardPen,
-    BarChart3, Zap, Scale, Settings2,Sigma, ChevronUp,PenTool,
-     ChevronDown, Trash2, PencilLine, Info} from "lucide-react";
+    LoaderCircle, GitCompare, Target, Search, GraduationCap, Compass,BarChart3,
+    Settings2,ChevronUp,PenTool,ChevronDown, Info,Save,RotateCcw, Trash2, } 
+    from "lucide-react";
 import MarkdownRenderer from "../components/MarkdownRenderer/MarkdownRenderer";
+import SaveAnalysisModal from "../components/SaveAnalysisModal";
 import QuickPromptCard from "../components/QuickPromptCard";
 
 
@@ -27,9 +28,12 @@ function AIWorkspacePage() {
     const [analysisDepth, setAnalysisDepth] = useState("Standard");
     const [writingStyle, setWritingStyle] =useState("Academic");
     const [outputFormat, setOutputFormat] =useState("Structured Report");
-    const [analysisType, setAnalysisType] =useState<AnalysisType>("compare");
+    const [analysisType, setAnalysisType] =useState<AnalysisType>("methodology");
     const [isGenerating, setIsGenerating] = useState(false);
     const responseRef = useRef<HTMLDivElement>(null);
+    const [isSaving, setIsSaving] = useState(false);
+    const [analysisSaved, setAnalysisSaved] = useState(false);
+    const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
 
     const uniqueAuthors = new Set(workspacePapers.flatMap((paper) =>
             paper.authors.split(",").map((author) => author.trim()))).size;
@@ -37,13 +41,6 @@ function AIWorkspacePage() {
     const uniqueCategories = new Set(workspacePapers.flatMap((paper) =>
             paper.categories.split(",").map((category) => category.trim()))).size;
 
-    const suggestedPrompts = [
-        "Compare the methodologies used in these papers.",
-        "Summarize the key contributions of each paper.",
-        "Identify common research gaps across these papers.",
-        "Explain these papers as if I'm a beginner.",
-        "What future research directions do these papers suggest?",
-    ];
 
     const quickPrompts = [
         {
@@ -94,23 +91,30 @@ function AIWorkspacePage() {
 
     const selectedCount = selectedPaperIds.length;
 
+    const handleClearWorkspace = () => {
+        clearWorkspace();
+
+        // Reset the analysis as well
+        handleResetAnalysis();
+    };
+
     const getValidationMessage = () => {
         switch (analysisType) {
-            case "compare":
-                return selectedCount !== 2
-                    ? "Select exactly two papers to compare."
+            case "methodology":
+                return selectedCount <= 1
+                    ? "Select at least 1 paper.."
                     : "";
             case "literature_review":
                 return selectedCount < 2
                     ? "Select at least two papers."
                     : "";
-            case "research_gap":
-                return selectedCount < 3
-                    ? "Select at least three papers."
+            case "critical_evaluation":
+                return selectedCount < 2
+                    ? "Select at least two papers."
                     : "";
-            case "beginner":
-                return selectedCount !== 1
-                    ? "Select exactly one paper."
+            case "applications":
+                return selectedCount <= 1
+                    ? "Select at least  one paper."
                     : "";
             default:
                 return "";
@@ -120,11 +124,10 @@ function AIWorkspacePage() {
     const validationMessage = getValidationMessage();
     const handleGenerate = async () => {
         setResponse("");
+        setAnalysisSaved(false);
         setIsGenerating(true);
-
         try {
             setIsGenerating(true);
-
             const result = await analyzeWorkspace({
                 paper_ids: selectedPaperIds,
                 analysis_type: analysisType,
@@ -133,7 +136,6 @@ function AIWorkspacePage() {
                 writing_style: writingStyle,
                 output_format: outputFormat,
             });
-
             setResponse(result.analysis);
             setTimeout(() => {
                 responseRef.current?.scrollIntoView({
@@ -141,25 +143,56 @@ function AIWorkspacePage() {
                     block: "start",
                 });
             }, 100);
-
         } catch (error) {
-
             console.error(error);
-
-            setResponse(
-                "Failed to generate analysis. Please try again."
-            );
-
+            setResponse("Failed to generate analysis. Please try again.");
         } finally {
-
             setIsGenerating(false);
-
         }
     };
-
     const handleCopy = async () => {
         await navigator.clipboard.writeText(response);
     };
+    const handleResetAnalysis = () => {
+        setSelectedPaperIds([]);
+
+        setPrompt("");
+        setResponse("");
+
+        setAnalysisType("methodology");
+        setAnalysisDepth("Standard");
+        setWritingStyle("Academic");
+        setOutputFormat("Structured Report");
+
+        setShowAdvanced(false);
+
+        setAnalysisSaved(false);
+        setIsSaving(false);
+        setIsSaveModalOpen(false);
+    };
+    const handleSave = async (title: string) => {
+        if (!response) return;
+        try {
+            setIsSaving(true);
+            
+            await saveAnalysis({
+                title, 
+                paper_arxiv_ids: selectedPaperIds,
+                analysis_type: analysisType,
+                analysis_depth: analysisDepth,
+                writing_style: writingStyle,
+                output_format: outputFormat,
+                additional_instructions: prompt,
+                generated_markdown: response,
+            });
+            setAnalysisSaved(true);
+            setIsSaveModalOpen(false);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsSaving(false);
+        }
+    }
 
     return (
         <main className="workspace-page">
@@ -217,8 +250,18 @@ function AIWorkspacePage() {
                                 {selectedCount} of {workspacePapers.length} selected
                             </p>
                         </div>
-                        <button className="clear-workspace-btn">
-                            <Trash2 size={16}/>
+                        <button
+                            className="reset-analysis-btn"
+                            onClick={handleResetAnalysis}
+                        >
+                            <RotateCcw size={16} />
+                            Reset Analysis
+                        </button>
+                        <button
+                            className="clear-workspace-btn"
+                            onClick={handleClearWorkspace}
+                        >
+                            <Trash2 size={16} />
                             Clear Workspace
                         </button>
                     </div>
@@ -424,12 +467,29 @@ function AIWorkspacePage() {
                             Generated Analysis
                         </h2>
                         {response && (
-                            <button className="copy-response-btn"
-                                onClick={handleCopy}
-                            >
-                                <Copy size={16} />
-                                Copy
-                            </button>
+                            <div className="response-actions">
+                                <button
+                                    className="copy-response-btn"
+                                    onClick={handleCopy}
+                                >
+                                    <Copy size={16}/>
+                                    Copy
+                                </button>
+                                <button
+                                    className="copy-response-btn"
+                                    onClick={() => {
+                                            setIsSaveModalOpen(true);
+                                    }}
+                                    disabled={isSaving || analysisSaved}
+                                >
+                                    <Save size={16} />
+                                    {analysisSaved
+                                        ? "Saved ✓"
+                                        : isSaving
+                                            ? "Saving..."
+                                            : "Save"}
+                                </button>
+                            </div>
                         )}
                     </div>
                     <div className="response-box">
@@ -457,6 +517,11 @@ function AIWorkspacePage() {
                 </section>
               </>
             )}
+            <SaveAnalysisModal
+                isOpen={isSaveModalOpen}
+                onClose={() => setIsSaveModalOpen(false)}
+                onSave={handleSave}
+            />
       </main>
     );
 }

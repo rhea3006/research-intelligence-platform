@@ -1,6 +1,6 @@
 from pydantic import BaseModel
-from typing import Literal
-from datetime import date
+from typing import Literal, List 
+from datetime import (date, datetime)
 
 class PaperSummary(BaseModel):
     arxiv_id : str
@@ -71,8 +71,8 @@ class HybridSearchResponse(BaseModel):
 
 class WorkspaceAnalysisRequest(BaseModel):
     paper_ids: list[str]
-    analysis_type: Literal[ "compare", "literature_review", "research_gap", 
-                           "beginner",]
+    analysis_type: Literal[ "methodology", "literature_review", "critical_evaluation", 
+                           "applications",]
 
     additional_prompt: str = ""
 
@@ -102,3 +102,61 @@ class PaperSummaryResponse(BaseModel):
     title: str
     summary: str
 
+
+# Analysis Management
+
+class AnalysisCreateRequest(BaseModel):
+    title: str | None = None
+
+    paper_arxiv_ids: list[str]
+
+    analysis_type: str
+
+    analysis_depth: str
+
+    writing_style: str
+
+    output_format: str
+
+    additional_instructions: str = ""
+
+    generated_markdown: str
+
+class AnalysisSummary(BaseModel):
+    id: int
+
+    title: str
+
+    analysis_type: str
+
+    created_at: datetime
+
+class AnalysisResponse(BaseModel):
+    id: int
+
+    title: str
+
+    paper_arxiv_ids: list[str]
+
+    analysis_type: str
+
+    analysis_depth: str
+
+    writing_style: str
+
+    output_format: str
+
+    additional_instructions: str
+
+    generated_markdown: str
+
+    created_at: datetime
+
+
+class DeleteAnalysisResponse(BaseModel):
+    deleted: bool
+
+
+class CreateAnalysisResponse(BaseModel):
+    analysis_id: int
+    message: str

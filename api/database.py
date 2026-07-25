@@ -278,3 +278,173 @@ def get_workspace_papers(arxiv_ids: list[str]):
     conn.close()
 
     return results
+
+def save_analysis(title,paper_arxiv_ids,analysis_type,analysis_depth,writing_style,
+                  output_format,additional_instructions,generated_markdown,):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+        # Insert the analysis
+        cursor.execute(
+            """
+            INSERT INTO analyses (
+                title,
+                analysis_type,
+                analysis_depth,
+                writing_style,
+                output_format,
+                additional_instructions,
+                generated_markdown
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            RETURNING id
+            """,
+            (title,analysis_type,analysis_depth,writing_style,output_format,
+             additional_instructions,generated_markdown,),
+        )
+
+        analysis_id = cursor.fetchone()[0]
+
+        # Link all selected papers
+        for arxiv_id in paper_arxiv_ids:
+            cursor.execute(
+                """
+                INSERT INTO analysis_papers (
+                    analysis_id,
+                    paper_arxiv_id
+                )
+                VALUES (%s, %s)
+                """,
+                (
+                    analysis_id,
+                    arxiv_id,
+                ),
+            )
+
+        conn.commit()
+        return analysis_id
+
+    except Exception:
+        conn.rollback()
+        raise
+
+    finally:
+        cursor.close()
+        conn.close()
+
+def get_all_analyses():
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("""
+            SELECT
+                id,
+                title,
+                analysis_type,
+                created_at
+            FROM analyses
+            ORDER BY created_at DESC
+        """)
+
+        rows = cursor.fetchall()
+
+        return [
+            {
+                "id": row[0],
+                "title": row[1],
+                "analysis_type": row[2],
+                "created_at": row[3],
+            }
+            for row in rows
+        ]
+
+    finally:
+        cursor.close()
+        conn.close()
+
+def get_analysis_by_id(analysis_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute(
+            """
+            SELECT
+                a.id,
+                a.title,
+                a.analysis_type,
+                a.analysis_depth,
+                a.writing_style,
+                a.output_format,
+                a.additional_instructions,
+                a.generated_markdown,
+                a.created_at,
+                ap.paper_arxiv_id
+            FROM analyses a
+            LEFT JOIN analysis_papers ap
+                ON a.id = ap.analysis_id
+            WHERE a.id = %s
+            """,
+            (analysis_id,),
+        )
+
+        rows = cursor.fetchall()
+
+        if not rows:
+            return None
+
+        first = rows[0]
+
+        return {
+            "id": first[0],
+            "title": first[1],
+            "analysis_type": first[2],
+            "analysis_depth": first[3],
+            "writing_style": first[4],
+            "output_format": first[5],
+            "additional_instructions": first[6],
+            "generated_markdown": first[7],
+            "created_at": first[8],
+            "paper_arxiv_ids": [
+                row[9] for row in rows if row[9] is not None
+            ],
+        }
+
+    finally:
+        cursor.close()
+        conn.close()
+
+def delete_analysis(analysis_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute(
+            """
+            DELETE FROM analyses
+            WHERE id = %s
+            RETURNING id
+            """,
+            (analysis_id,),
+        )
+
+        deleted = cursor.fetchone()
+
+        conn.commit()
+
+        if deleted:
+            return True
+
+        return False
+
+    except Exception:
+        conn.rollback()
+        raise
+
+    finally:
+        cursor.close()
+        conn.close()
+
+    

@@ -7,7 +7,6 @@ import { searchPapers } from "../services/api";
 import type { Paper } from "../types/paper";
 import PaperCard from "../components/PaperCard";
 import SearchFilters from "../components/SearchFilters";
-import LoadingSpinner from "../components/LoadingSpinner";
 import EmptyState from "../components/EmptyState";
 import Pagination from "../components/Pagination";
 import ActiveFilters from '../components/ActiveFilters';
@@ -28,7 +27,6 @@ function HomePage() {
   const [totalPages, setTotalPages] = useState(1);
   const [totalResults, setTotalResults] = useState(0);
 
-  useEffect(() => {console.log("papers state:", papers);}, [papers]);
     
   const handleSearch = async (pageNumber = page) => {
     setHasSearched(true);
@@ -38,7 +36,6 @@ function HomePage() {
     try {
       const response = await searchPapers(query,category,author,year,sort,
         pageNumber);
-      console.log(response.results);
       setPapers(response.results);
       setTotalPages(response.total_pages);
       setTotalResults(response.total);

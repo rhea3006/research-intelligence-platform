@@ -4,6 +4,7 @@ import Layout from "./components/Layout";
 import HomePage from "./pages/HomePage";
 import PaperDetailsPage from "./pages/PaperDetailsPage";
 import SavedPapersPage from "./pages/SavedPapersPage";
+import MyAnalysesPage from "./pages/MyAnalysesPage";
 import AIWorkspacePage from "./pages/AIWorkspacePage";
 import { SavedPapersProvider } from "./context/SavedPapersContext";
 import { WorkspaceProvider } from "./context/WorkspaceContext";
@@ -31,6 +32,10 @@ function App() {
             <Route
                 path="/workspace"
                 element={<AIWorkspacePage />}
+            />
+            <Route
+                path="/analyses"
+                element={<MyAnalysesPage />}
             />
           </Routes>
         </BrowserRouter>

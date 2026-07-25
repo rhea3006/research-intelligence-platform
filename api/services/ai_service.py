@@ -27,16 +27,17 @@ def build_prompt(papers,analysis_type,additional_prompt,analysis_depth,
 
     combined_context = "\n".join(paper_context)
 
-    if analysis_type == "compare":
+    if analysis_type == "methodology":
         analysis_instruction = """
-        Compare the selected papers.
+        Generate a structured methodology analysis.
 
         Include:
-        1. Executive Summary
-        2. Methodology Comparison
-        3. Strengths and Weaknesses
-        4. Key Findings
-        5. Final Recommendation
+        1. Research Objectives
+        2. Datasets and Experimental Setup
+        3. Models and Algorithms Used
+        4. Evaluation Metrics
+        5. Methodological Strengths and Weaknesses
+        6. Comparative Summary
         """
 
     elif analysis_type == "literature_review":
@@ -51,24 +52,30 @@ def build_prompt(papers,analysis_type,additional_prompt,analysis_depth,
         5. Conclusion
         """
 
-    elif analysis_type == "research_gap":
+    elif analysis_type == "critical_evaluation":
         analysis_instruction = """
-        Analyze the selected papers to identify research gaps.
+        Generate a critical evaluation of the selected papers.
 
         Include:
-        1. Existing Approaches
-        2. Current Limitations
-        3. Missing Research Opportunities
-        4. Future Directions
+        1. Key Strengths
+        2. Major Limitations
+        3. Assumptions and Potential Biases
+        4. Threats to Validity
+        5. Reproducibility and Practical Feasibility
+        6. Overall Assessment
         """
 
-    elif analysis_type == "beginner":
+    elif analysis_type == "applications":
         analysis_instruction = """
-        Explain the selected papers in simple language.
+        Generate an analysis of the practical applications of the selected papers.
 
-        Avoid unnecessary jargon.
-
-        Use examples wherever possible.
+        Include:
+        1. Potential Industry Applications
+        2. Real-World Use Cases
+        3. Benefits and Impact
+        4. Implementation Challenges
+        5. Future Commercial Opportunities
+        6. Overall Practical Relevance
         """
     return f"""
         You are an expert research assistant.

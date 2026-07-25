@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import type { ReactNode } from "react";
 import { useParams } from "react-router-dom";
 import type { PaperDetail } from "../types/paper";
 import type { Paper } from "../types/paper";
@@ -87,8 +86,7 @@ function PaperDetailsPage() {
     if (!paper) {
     return <LoadingSpinner />;
     }
-
-    const pdfUrl = paper.arxiv_url.replace("/abs/", "/pdf/") + ".pdf";
+    
     const formatDate = (date: string) =>
     new Date(date).toLocaleDateString("en-US", {
         year: "numeric",

@@ -1,0 +1,161 @@
+.analysis-header{
+    margin-bottom:2rem;
+}
+
+.analysis-title-row{
+    display:flex;
+    align-items:flex-start;
+    gap:1rem;
+
+    margin-bottom:1rem;
+}
+
+.analysis-title-icon{
+    color:var(--accent-color);
+
+    flex-shrink:0;
+
+    margin-top:.35rem;
+}
+
+.analysis-header h1{
+
+    margin:0;
+
+    font-size:2rem;
+
+    line-height:1.25;
+
+    font-weight:700;
+}
+
+.analysis-meta{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:1rem;
+
+    flex-wrap:wrap;
+
+    margin-bottom:1.5rem;
+}
+
+.analysis-badge{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:.45rem;
+
+    padding:.45rem .9rem;
+
+    border-radius:999px;
+
+    background:rgba(99,102,241,.12);
+
+    color:var(--accent-color);
+
+    border:1px solid rgba(99,102,241,.18);
+
+    font-size:.85rem;
+
+    font-weight:600;
+}
+
+.analysis-created{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:.45rem;
+
+    color:var(--text-secondary);
+
+    font-size:.9rem;
+}
+
+.analysis-divider{
+
+    border-top:1px solid var(--border-color);
+}
+
+.analysis-search {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 0.85rem 1rem;
+
+    background: var(--surface-secondary);
+
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+
+    transition: all 0.2s ease;
+}
+
+
+.analysis-search:focus-within {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.analysis-search input::placeholder {
+    color: var(--text-secondary);
+}
+
+.analysis-search input {
+    flex: 1;
+
+    border: none;
+    outline: none;
+
+    background: transparent;
+
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+
+.search-icon {
+    flex-shrink: 0;
+    color: var(--text-secondary);
+}
+
+.analysis-count{
+    font-size:.9rem;
+    color:var(--text-secondary);
+    margin-top:-.5rem;
+}
+
+.analysis-sidebar {
+    width: 380px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    background: var(--surface-primary);
+    border-right: 1px solid var(--border-color);
+}
+
+.sidebar-divider{
+    border-top:1px solid var(--border-color);
+    margin:1.5rem 0;
+    margin-bottom:1.5rem;
+    margin-top:1.25rem;
+}
+
+
+.sidebar-header{
+    display:flex;
+    flex-direction:column;
+    gap:1rem;
+    margin-bottom:1.5rem;
+    padding-bottom:1.5rem;
+}
+

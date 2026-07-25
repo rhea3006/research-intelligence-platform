@@ -1,4 +1,4 @@
-import {Scale,BookOpen,Search,GraduationCap,} from "lucide-react";
+import {Microscope,BookOpen,ShieldCheck, Rocket} from "lucide-react";
 import type { AnalysisType } from "../services/api";
 import type { ReactNode } from "react";
 
@@ -12,11 +12,11 @@ interface AnalysisTypeCard {
 
 const analysisTypes: AnalysisTypeCard[] = [
     {
-        id: "compare",
-        icon: <Scale size={26} />,
-        title: "Compare Papers",
+        id: "methodology",
+        icon: <Microscope size={26} />,
+        title: "Methodology Analysis",
         description:
-            "Compare methodologies, strengths, weaknesses and findings.",
+            "Discuss datasets, models, evaluation metrics, experimental design, strengths and weaknesses of each approach.",
     },
     {
         id: "literature_review",
@@ -26,18 +26,18 @@ const analysisTypes: AnalysisTypeCard[] = [
             "Generate a structured review across selected papers.",
     },
     {
-        id: "research_gap",
-        icon: <Search size={26} />,
-        title: "Research Gap Analysis",
+        id: "critical_evaluation",
+        icon: <ShieldCheck size={26} />,
+        title: "Critical Evaluation",
         description:
-            "Identify limitations, unanswered questions and future work.",
+            "Identify assumptions, limitations, potential biases, threats to validity and opportunities for improvement.",
     },
     {
-        id: "beginner",
-        icon: <GraduationCap size={26} />,
-        title: "Beginner Explanation",
+        id: "applications",
+        icon: <Rocket size={26} />,
+        title: "Real-World Applications",
         description:
-            "Explain the selected papers in simple language.",
+            "Describe where these techniques can be used in industry, real-world systems and future products.",
     },
 ];
 
@@ -55,7 +55,7 @@ function AnalysisTypeSelector({
         <div className="analysis-selector">
 
             <div className="analysis-header">
-                <h3>Choose Analysis Type</h3>
+                <h3>Choose Analysis Perspective</h3>
                 <p>
                     Select how you want AI to analyze your research papers.
                 </p>
