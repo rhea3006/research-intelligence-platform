@@ -2,6 +2,8 @@ from api.database import (get_papers_for_embedding,update_embedding_vector,seman
 from api.services.search_service import search_papers_service
 import numpy as np
 import json
+import os
+import psutil
 
 model = None
 
@@ -11,18 +13,43 @@ def get_model():
     if model is None:
         from sentence_transformers import SentenceTransformer
 
-        print("Loading embedding model...")
+        process = psutil.Process(os.getpid())
+
+        print(
+            f"Memory BEFORE model load: "
+            f"{process.memory_info().rss / 1024 / 1024:.1f} MB"
+        )
 
         model = SentenceTransformer(
             "sentence-transformers/all-MiniLM-L6-v2",
             local_files_only=True,
         )
 
+        print(
+            f"Memory AFTER model load: "
+            f"{process.memory_info().rss / 1024 / 1024:.1f} MB"
+        )
+
     return model
 
 def generate_embedding(text):
     """Generate a sentence embedding for the given text."""
-    return get_model().encode(text)
+    process = psutil.Process(os.getpid())
+
+    print(
+        f"Memory BEFORE encode: "
+        f"{process.memory_info().rss / 1024 / 1024:.1f} MB"
+    )
+
+    model = get_model()
+    embedding = model.encode(text)
+
+    print(
+        f"Memory AFTER encode: "
+        f"{process.memory_info().rss / 1024 / 1024:.1f} MB"
+    )
+
+    return embedding
 
 def cosine_similarity(a, b):
     return np.dot(a, b) / (np.linalg.norm(a) *np.linalg.norm(b))

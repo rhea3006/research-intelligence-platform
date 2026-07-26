@@ -28,8 +28,9 @@ app.include_router(papers_router)
 app.include_router(workspace_router)
 app.include_router(analyses.router)
 
-app.add_middleware(CORSMiddleware,allow_origins=["http://localhost:5173",],allow_credentials=True,
-    allow_methods=["*"],allow_headers=["*"],)
+app.add_middleware(CORSMiddleware,
+                allow_origins=["http://localhost:5173","https://research-intelligence-platform-iota.vercel.app",],
+                allow_credentials=True,allow_methods=["*"],allow_headers=["*"],)
 
 @app.get("/") # this is root route, whenever the browser visits a particular url, it sends a HTTP request which is get, it tells to run the function below.
 def home(): # fastAPI knows whenver we have a GET call, go to home function

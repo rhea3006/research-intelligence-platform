@@ -8,8 +8,14 @@ load_dotenv()
 print("DATABASE_URL =", os.getenv("DATABASE_URL"))
 
 def get_connection():
-    conn= psycopg2.connect(os.getenv("DATABASE_URL"))
+    database_url = os.getenv("DATABASE_URL")
+
+    print(f"Connecting to DB: {database_url is not None}")
+
+    conn = psycopg2.connect(database_url)
+
     register_vector(conn)
+
     return conn
 
 def get_all_papers(limit,offset):
