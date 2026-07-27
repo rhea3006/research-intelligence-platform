@@ -1,0 +1,5 @@
+fastapi
+uvicorn
+fastapi
+uvicorn
+sentence-transformers[onnx]
