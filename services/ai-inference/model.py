@@ -1,5 +1,5 @@
 
-
+MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 embedding_model = None
 
 def get_model():
@@ -9,7 +9,7 @@ def get_model():
         from sentence_transformers import SentenceTransformer
 
         embedding_model = SentenceTransformer(
-            "sentence-transformers/all-MiniLM-L6-v2",
+            MODEL_NAME,
             backend="onnx",
         )
 
