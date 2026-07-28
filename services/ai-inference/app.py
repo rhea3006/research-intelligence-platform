@@ -1,11 +1,9 @@
-from fastapi import FastAPI
 from pydantic import BaseModel, Field
 from contextlib import asynccontextmanager
-from model import get_model, generate_embedding
+from model import initialize, generate_embedding
 from fastapi import FastAPI, HTTPException
 import logging
 import os
-import time
 
 logging.basicConfig(
     level=logging.INFO,
@@ -16,17 +14,31 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("Loading embedding model...")
-    get_model()
-    logger.info("Embedding model loaded.")
+    logger.info("Initializing embedding model...")
+
+    initialize()
+
+    logger.info("Embedding model initialized successfully.")
+
     yield
     
 
-app = FastAPI(title="Project Alpha AI Inference Service")
+app = FastAPI(title="Project Alpha AI Inference Service",lifespan=lifespan,)
 
-MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
-SERVICE_NAME = "ai-inference"
-SERVICE_VERSION = "1.0.0"
+MODEL_NAME = os.getenv(
+    "MODEL_NAME",
+    "sentence-transformers/all-MiniLM-L6-v2",
+)
+
+SERVICE_NAME = os.getenv(
+    "SERVICE_NAME",
+    "ai-inference",
+)
+
+SERVICE_VERSION = os.getenv(
+    "SERVICE_VERSION",
+    "1.0.0",
+)
 
 class EmbeddingRequest(BaseModel):
     text: str = Field(
@@ -69,7 +81,8 @@ def embed(request: EmbeddingRequest):
         embedding = generate_embedding(request.text)
 
         logger.info(
-            "Successfully generated embedding (%d dimensions).",
+            "Generated embedding for %d characters (%d dimensions).",
+            len(request.text),
             len(embedding),
         )
 
@@ -79,10 +92,18 @@ def embed(request: EmbeddingRequest):
             model=MODEL_NAME,
         )
 
+    except ValueError as e:
+        logger.warning("Invalid embedding request: %s", e)
+
+        raise HTTPException(
+            status_code=400,
+            detail=str(e),
+        )
+
     except Exception:
         logger.exception("Embedding generation failed.")
 
         raise HTTPException(
             status_code=500,
-            detail="Failed to generate embedding."
+            detail="Failed to generate embedding.",
         )
