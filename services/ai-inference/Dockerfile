@@ -37,7 +37,5 @@ snapshot_download( \
 # Copy the rest of the application
 COPY . .
 
-# Cloud Run injects the PORT environment variable
-ENV PORT=8080
-
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8080"]
+# Render/Cloud Run will inject PORT automatically
+CMD ["sh", "-c", "uvicorn app:app --host 0.0.0.0 --port ${PORT:-8080}"]

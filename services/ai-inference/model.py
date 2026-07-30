@@ -98,11 +98,15 @@ def tokenize(text: str) -> dict[str, np.ndarray]:
         max_length=MAX_SEQUENCE_LENGTH,
     )
 
-    return {
+    inputs = {
         "input_ids": encoded["input_ids"].astype(np.int64),
         "attention_mask": encoded["attention_mask"].astype(np.int64),
-        "token_type_ids": encoded["token_type_ids"].astype(np.int64),
     }
+
+    if "token_type_ids" in encoded:
+        inputs["token_type_ids"] = encoded["token_type_ids"].astype(np.int64)
+
+    return inputs
 
 def run_inference(
     inputs: dict[str, np.ndarray],

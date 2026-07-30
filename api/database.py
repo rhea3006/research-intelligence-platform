@@ -86,7 +86,7 @@ def search_papers(q, limit, offset, category= None, author= None, year= None,
         CASE
             WHEN authors ILIKE %s THEN 1
             ELSE 0
-        END) AS relevance_score, embedding FROM papers
+        END) AS relevance_score FROM papers
         WHERE (title ILIKE %s OR abstract ILIKE %s OR authors ILIKE %s 
         OR categories ILIKE %s )
         ORDER BY ORDER_BY_PLACEHOLDER LIMIT %s OFFSET %s"""
@@ -180,7 +180,13 @@ def get_papers_for_embedding():
     conn= get_connection()
     cursor=conn.cursor()
 
-    cursor.execute("""SELECT arxiv_id, title, abstract FROM papers WHERE embedding IS NULL""")
+    cursor.execute(
+    """
+    SELECT arxiv_id, title, abstract
+    FROM papers
+    WHERE embedding_vector IS NULL
+    """
+    )
     results = cursor.fetchall()
 
     cursor.close()
@@ -211,8 +217,18 @@ def update_embedding_vector(arxiv_id, embedding):
 def get_all_embeddings():
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("""SELECT arxiv_id,title, authors, published_date, embedding FROM papers
-                   WHERE embedding IS NOT NULL""")
+    cursor.execute(
+    """
+    SELECT
+        arxiv_id,
+        title,
+        authors,
+        published_date,
+        embedding_vector
+    FROM papers
+    WHERE embedding_vector IS NOT NULL
+    """
+    )
 
     results = cursor.fetchall()
     cursor.close()

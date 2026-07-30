@@ -16,7 +16,6 @@ def search_papers_service(q, page, limit, category=None, author=None, year=None,
             "categories": row[4],
             "published_date": str(row[5]) if row[5] else None,
             "relevance_score": row[6],
-            "embedding": row[7],
         })
     
 
