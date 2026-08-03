@@ -1,5 +1,6 @@
 from api.database import (get_papers_for_embedding,update_embedding_vector,semantic_search_db,)
 from api.services.search_service import search_papers_service
+from clients.embedding_client import generate_embedding
 import numpy as np
 import json
 import os
@@ -13,7 +14,7 @@ def cosine_similarity(a, b):
 
 def create_paper_embedding(title, abstract):
     text = f"{title} {abstract}"
-    return generate_embedding(text).tolist()
+    return generate_embedding(text)
 
 def backfill_embeddings():
 
@@ -35,8 +36,7 @@ def semantic_search(query,limit=10):
     Returns the top matching papers.
 
     """
-    query_embedding = generate_embedding(query).tolist()
-
+    query_embedding = generate_embedding(query)
     results = semantic_search_db(query_embedding,limit)
 
 
