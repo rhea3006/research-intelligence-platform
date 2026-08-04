@@ -180,13 +180,7 @@ def get_papers_for_embedding():
     conn= get_connection()
     cursor=conn.cursor()
 
-    cursor.execute(
-    """
-    SELECT arxiv_id, title, abstract
-    FROM papers
-    WHERE embedding_vector IS NULL
-    """
-    )
+    cursor.execute("""SELECT arxiv_id, title, abstract FROM papers""")
     results = cursor.fetchall()
 
     cursor.close()

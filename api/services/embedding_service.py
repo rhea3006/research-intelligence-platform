@@ -4,7 +4,6 @@ from clients.embedding_client import generate_embedding
 import numpy as np
 import json
 import os
-import psutil
 
 model = None
 
@@ -14,6 +13,7 @@ def cosine_similarity(a, b):
 
 def create_paper_embedding(title, abstract):
     text = f"{title} {abstract}"
+    print(f"Length: {len(text)}")
     return generate_embedding(text)
 
 def backfill_embeddings():
@@ -22,12 +22,15 @@ def backfill_embeddings():
     print(f"Found {len(papers)} papers")
 
     for paper in papers:
-        arxiv_id = paper[0]
-        title = paper[1]
-        abstract = paper[2]
-        embedding = create_paper_embedding(title,abstract)
-        update_embedding_vector(arxiv_id, embedding)
-        print(f"Embedded {arxiv_id}")
+        arxiv_id, title, abstract = paper
+
+        try:
+            embedding = create_paper_embedding(title, abstract)
+            update_embedding_vector(arxiv_id, embedding)
+            print(f"Embedded {arxiv_id}")
+
+        except Exception as e:
+            print(f"Failed {arxiv_id}: {e}")
 
 
 def semantic_search(query,limit=10):

@@ -6,7 +6,7 @@ EMBEDDING_SERVICE_URL = os.getenv(
     "http://localhost:8080",
 )
 
-TIMEOUT = 30
+TIMEOUT = 300
 
 
 def generate_embedding(text: str) -> list[float]:
