@@ -1,8 +1,8 @@
-from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from ingestion.ingest_paper import run_ingestion
 from datetime import datetime
 
-scheduler = BackgroundScheduler()
+scheduler = AsyncIOScheduler()
 
 def scheduled_ingestion():
     print("=" * 60)
