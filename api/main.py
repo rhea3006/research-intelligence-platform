@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
-from ingestion.scheduler import (start_scheduler,stop_scheduler)
+from ingestion.scheduler import (start_scheduler,stop_scheduler,scheduled_ingestion)
 from fastapi.middleware.cors import CORSMiddleware
 from api.routes import (search_router, papers_router, workspace_router)
 from api.routes import analyses
@@ -11,6 +11,10 @@ async def lifespan(app):
     print("🚀 Starting Research Intelligence Platform...")
 
     start_scheduler()
+
+    print("Running one manual ingestion...")
+
+    scheduled_ingestion()
 
     yield
 

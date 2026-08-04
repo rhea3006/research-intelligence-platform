@@ -29,6 +29,8 @@ def start_scheduler():
     if not scheduler.running:
         scheduler.start()
         print("📅 Scheduler started.")
+        print("Scheduler running:", scheduler.running)
+        print("Jobs:", scheduler.get_jobs())
 
 def stop_scheduler():
     if scheduler.running:
