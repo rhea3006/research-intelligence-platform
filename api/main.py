@@ -12,10 +12,6 @@ async def lifespan(app):
 
     start_scheduler()
 
-    print("Running one manual ingestion...")
-
-    scheduled_ingestion()
-
     yield
 
     stop_scheduler()
