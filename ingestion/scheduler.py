@@ -1,9 +1,8 @@
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from ingestion.ingest_paper import run_ingestion
-from threading import Thread
 from datetime import datetime
 
-scheduler = AsyncIOScheduler()
+scheduler = None
 
 def ingestion_worker():
     print("=" * 60)
@@ -22,20 +21,43 @@ def ingestion_worker():
 
 
 def scheduled_ingestion():
-    Thread(target=ingestion_worker, daemon=True).start()
+    print("=" * 60)
+    print(f"🚀 Scheduler fired at {datetime.now()}")
 
+    try:
+        stats = run_ingestion(verbose=True)
 
-scheduler.add_job(scheduled_ingestion,trigger="interval",minutes=1,next_run_time=datetime.now(),
-    id="paper_ingestion",replace_existing=True,)
+        print(
+            f"Inserted: {stats['inserted']}"
+        )
+
+    except Exception as e:
+        print(e)
 
 def start_scheduler():
+    global scheduler
+
+    if scheduler is None:
+        scheduler = AsyncIOScheduler()
+
+        scheduler.add_job(
+            scheduled_ingestion,
+            trigger="interval",
+            minutes=1,
+            next_run_time=datetime.now(),
+            id="paper_ingestion",
+            replace_existing=True,
+        )
+
     if not scheduler.running:
         scheduler.start()
-        print("📅 Scheduler started.")
-        print("Scheduler running:", scheduler.running)
-        print("Jobs:", scheduler.get_jobs())
+
+    print("📅 Scheduler started.")
+    print("Scheduler running:", scheduler.running)
+    print("Jobs:", scheduler.get_jobs())
 
 def stop_scheduler():
-    if scheduler.running:
+    global scheduler
+
+    if scheduler and scheduler.running:
         scheduler.shutdown()
-        print("🛑 Scheduler stopped.")
