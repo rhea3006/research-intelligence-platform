@@ -79,7 +79,15 @@ def hybrid_search(q,page=1,limit=10,category=None,author=None,year=None,sort="re
 
     keyword_results = keyword_response["results"]
 
-    semantic_results = semantic_search(q,limit=CANDIDATE_POOL_SIZE,)
+    # Top semantic matches
+    try:
+        semantic_results = semantic_search(
+            q,
+            limit=CANDIDATE_POOL_SIZE,
+        )
+    except Exception as e:
+        print(f"Semantic search unavailable: {e}")
+        semantic_results = []
 
     combined = {}
 
