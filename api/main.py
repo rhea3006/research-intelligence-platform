@@ -10,11 +10,11 @@ from contextlib import asynccontextmanager
 async def lifespan(app):
     print("🚀 Starting Research Intelligence Platform...")
 
-    start_scheduler()
+    #start_scheduler()
 
     yield
 
-    stop_scheduler()
+    #stop_scheduler()
 
     print("🛑 Shutting down Research Intelligence Platform...")
 

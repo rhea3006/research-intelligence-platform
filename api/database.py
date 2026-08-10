@@ -264,6 +264,18 @@ def semantic_search_db(query_embedding, limit=10):
 
     return results
 
+def paper_exists(cursor, arxiv_id):
+    cursor.execute(
+        """
+        SELECT 1
+        FROM papers
+        WHERE arxiv_id = %s
+        """,
+        (arxiv_id,),
+    )
+
+    return cursor.fetchone() is not None
+
 def get_workspace_papers(arxiv_ids: list[str]):
     """
     Fetch the papers selected in the AI Workspace.

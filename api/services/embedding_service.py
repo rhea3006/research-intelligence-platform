@@ -79,20 +79,24 @@ def hybrid_search(q,page=1,limit=10,category=None,author=None,year=None,sort="re
 
     keyword_results = keyword_response["results"]
 
-    # Top semantic matches
-    semantic_results = semantic_search(q, limit=30)
+    semantic_results = semantic_search(q,limit=CANDIDATE_POOL_SIZE,)
 
     combined = {}
 
     # Add keyword results
-    for paper in keyword_results:
-        combined[paper["arxiv_id"]] = {
-            **paper,
-            "keyword_score": paper["relevance_score"] / 8,
-            "semantic_score": 0,
-        }
 
-    SEMANTIC_THRESHOLD = 0.70
+    max_keyword_score = max((paper["relevance_score"] 
+                             for paper in keyword_results),default=1,)
+    for paper in keyword_results:
+        combined[paper["arxiv_id"]] = {**paper,"keyword_score": 
+                                       paper["relevance_score"] / max_keyword_score,
+                                       "semantic_score": 0,}
+
+    
+    best_similarity = max((paper["similarity"] for paper in semantic_results),
+                           default=0,)
+
+    SEMANTIC_THRESHOLD = best_similarity * 0.80
 
     for paper in semantic_results:
         if paper["similarity"] < SEMANTIC_THRESHOLD:
@@ -109,8 +113,8 @@ def hybrid_search(q,page=1,limit=10,category=None,author=None,year=None,sort="re
                 "semantic_score": paper["similarity"],
             }
 
-    KEYWORD_WEIGHT = 0.5
-    SEMANTIC_WEIGHT = 0.5
+    KEYWORD_WEIGHT = 0.35
+    SEMANTIC_WEIGHT = 0.65
     
     # Compute hybrid score
     for paper in combined.values():

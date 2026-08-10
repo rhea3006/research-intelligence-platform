@@ -1,17 +1,33 @@
 import requests
 import feedparser
 import psycopg2
-from api.database import get_connection
+from api.database import get_connection,paper_exists
 from pgvector.psycopg2 import register_vector
 from api.services.embedding_service import create_paper_embedding
 
 
-def fetch_papers(query, max_results):
+def fetch_papers(query,start=0,max_results=100,sort_by="submittedDate",sort_order="descending",):
     url = "https://export.arxiv.org/api/query"
-    params = {"search_query": query,"start": 0,"max_results": max_results,
-              "sortBy": "submittedDate", "sortOrder": "descending"}
+
+    params = {
+        "search_query": query,
+        "start": start,
+        "max_results": max_results,
+        "sortBy": sort_by,
+        "sortOrder": sort_order,
+    }
+
     response = requests.get(url, params=params)
+
     feed = feedparser.parse(response.text)
+
+    print(f"Query: {query}")
+    print(f"Start: {start}")
+    print(f"Returned entries: {len(feed.entries)}")
+
+    if hasattr(feed, "feed"):
+        print("OpenSearch totalResults:", feed.feed.get("opensearch_totalresults"))
+
     return feed.entries
 
 def extract_paper_data(paper):
@@ -46,7 +62,7 @@ def save_paper(cursor, paper_data):
     )
     return cursor.rowcount
 
-def run_ingestion(query="all:machine learning", max_results=150, verbose=True,):
+def run_ingestion(query="all:machine learning", max_results=20, verbose=True,):
     conn = get_connection()
     cursor = conn.cursor()
     papers = fetch_papers(query=query,max_results=max_results,)
@@ -55,25 +71,21 @@ def run_ingestion(query="all:machine learning", max_results=150, verbose=True,):
 
     for paper in papers:
         paper_data = extract_paper_data(paper)
+
+        if paper_exists(cursor, paper_data["arxiv_id"]):
+            skipped_count += 1
+
+            if verbose:
+                print(f"Skipped: {paper_data['title']}")
+
+            continue
+
         paper_data["embedding_vector"] = create_paper_embedding(
             paper_data["title"],
             paper_data["abstract"],
         )
+
         inserted = save_paper(cursor, paper_data)
-        if verbose:
-            if inserted:
-                print(f"Inserted: {paper_data['title']}")
-            else:
-                print(f"Skipped: {paper_data['title']}")
-
-        if inserted:
-            inserted_count += 1
-        else:
-            skipped_count += 1 
-
-    if verbose:
-        print(f"Inserted: {inserted_count}")
-        print(f"Skipped: {skipped_count}")
     conn.commit()
     
 
