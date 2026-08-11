@@ -90,55 +90,42 @@ def hybrid_search(q,page=1,limit=10,category=None,author=None,year=None,sort="re
         semantic_results = []
 
     combined = {}
-
-    # Add keyword results
-
-    max_keyword_score = max((paper["relevance_score"] 
-                             for paper in keyword_results),default=1,)
-    for paper in keyword_results:
-        combined[paper["arxiv_id"]] = {**paper,"keyword_score": 
-                                       paper["relevance_score"] / max_keyword_score,
-                                       "semantic_score": 0,}
+    
+    RRF_K = 60
+    for rank, paper in enumerate(keyword_results, start=1):
+        combined[paper["arxiv_id"]] = {**paper,"rrf_score": 1 / (RRF_K + rank),}
 
     
     best_similarity = max((paper["similarity"] for paper in semantic_results),
                            default=0,)
 
-    SEMANTIC_THRESHOLD = best_similarity * 0.80
+    SEMANTIC_THRESHOLD = 0.70 * best_similarity
 
-    for paper in semantic_results:
+    for rank, paper in enumerate(semantic_results, start=1):
+
         if paper["similarity"] < SEMANTIC_THRESHOLD:
             continue
 
         arxiv_id = paper["arxiv_id"]
 
         if arxiv_id in combined:
-            combined[arxiv_id]["semantic_score"] = paper["similarity"]
+
+            combined[arxiv_id]["rrf_score"] += 1 / (RRF_K + rank)
+
         else:
+
             combined[arxiv_id] = {
                 **paper,
-                "keyword_score": 0,
-                "semantic_score": paper["similarity"],
+                "rrf_score": 1 / (RRF_K + rank),
             }
 
-    KEYWORD_WEIGHT = 0.35
-    SEMANTIC_WEIGHT = 0.65
-    
-    # Compute hybrid score
     for paper in combined.values():
 
-        paper["hybrid_score"] = (
-            KEYWORD_WEIGHT * paper["keyword_score"]
-            + SEMANTIC_WEIGHT * paper["semantic_score"]
-        )
+        paper["hybrid_score"] = paper["rrf_score"]
 
-        paper.pop("embedding", None)
-
-
-        # Remove internal fields
-        paper.pop("embedding", None)
-        paper.pop("keyword_score", None)
+        paper.pop("rrf_score", None)
         paper.pop("similarity", None)
+        paper.pop("embedding", None)
 
     # Sort by hybrid relevance
     results = sorted(
