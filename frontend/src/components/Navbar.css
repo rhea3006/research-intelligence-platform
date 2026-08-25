@@ -73,3 +73,10 @@
 
     color:#4f8cff;
 }
+
+.auth-button {
+    border: none;
+    background: none;
+    font: inherit;
+    cursor: pointer;
+}

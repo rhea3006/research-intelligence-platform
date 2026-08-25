@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
-import { House, Bookmark, Sparkles,FileText } from "lucide-react";
+import { House, Bookmark, Sparkles,FileText,LogIn,LogOut, } from "lucide-react";
+import { useAuth } from "../auth/Authcontext";
 import "./Navbar.css"
 
 type NavbarProps = {
@@ -11,6 +12,9 @@ type NavbarProps = {
 };
 
 function Navbar({ title, subtitle }: NavbarProps) {
+
+    const { isAuthenticated, logout } = useAuth();
+
   return (
     <header className="navbar">
       <div className="navbar-brand">
@@ -57,6 +61,25 @@ function Navbar({ title, subtitle }: NavbarProps) {
               <FileText size={22} />
               <span>My Analyses</span>
           </NavLink>
+          {isAuthenticated ? (
+                <button
+                    className="nav-link auth-button"
+                    onClick={logout}
+                >
+                    <LogOut size={22} />
+                    <span>Logout</span>
+                </button>
+            ) : (
+                <NavLink
+                    to="/login"
+                    className={({ isActive }) =>
+                        isActive ? "nav-link active" : "nav-link"
+                    }
+                >
+                    <LogIn size={22} />
+                    <span>Login</span>
+                </NavLink>
+            )}
       </nav>
     </header>
   );
