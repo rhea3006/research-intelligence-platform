@@ -8,6 +8,7 @@ charset-normalizer==3.4.7
 click==8.4.1
 cryptography==49.0.0
 distro==1.9.0
+email-validator
 fastapi==0.137.0
 feedparser==6.0.12
 filelock==3.29.4
@@ -35,12 +36,14 @@ packaging==26.2
 pgvector==0.5.0
 psutil==7.0.0
 psycopg2-binary==2.9.12
+pwdlib[argon2]
 pyasn1==0.6.4
 pyasn1_modules==0.4.2
 pycparser==3.0
 pydantic==2.13.4
 pydantic_core==2.46.4
 Pygments==2.20.0
+python-jose[cryptography]
 python-dotenv==1.2.2
 PyYAML==6.0.3
 regex==2026.5.9

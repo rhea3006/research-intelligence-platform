@@ -1,13 +1,16 @@
 from api.database import (save_analysis,get_all_analyses, get_analysis_by_id,
 delete_analysis,)
+from api.services.auth_service import get_current_user
+from fastapi import Depends
 
 
-def create_analysis(request):
+def create_analysis(request,current_user=Depends(get_current_user)):
     """
     Save a generated AI analysis.
     """
 
     analysis_id = save_analysis(
+        user_id=current_user,
         title=request.title,
         paper_arxiv_ids=request.paper_arxiv_ids,
         analysis_type=request.analysis_type,
@@ -23,16 +26,16 @@ def create_analysis(request):
         "message": "Analysis saved successfully."
     }
 
-def fetch_all_analyses():
-    return get_all_analyses()
+def fetch_all_analyses(user_id):
+    return get_all_analyses(user_id)
 
 
-def fetch_analysis(analysis_id):
-    return get_analysis_by_id(analysis_id)
+def fetch_analysis(analysis_id,user_id):
+    return get_analysis_by_id(analysis_id, user_id)
 
 
-def remove_analysis(analysis_id):
-    deleted = delete_analysis(analysis_id)
+def remove_analysis(analysis_id,user_id):
+    deleted = delete_analysis(analysis_id,user_id)
 
     return {
         "deleted": deleted

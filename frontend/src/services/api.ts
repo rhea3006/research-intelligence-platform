@@ -5,6 +5,16 @@ const API_BASE = axios.create({
     baseURL: import.meta.env.VITE_API_BASE_URL,
 });
 
+API_BASE.interceptors.request.use((config) => {
+    const token = localStorage.getItem("access_token");
+
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+});
+
 export async function searchPapers(
   query: string,
   category: string,
@@ -82,8 +92,9 @@ export interface SaveAnalysisRequest {
     analysis_depth: string;
     writing_style: string;
     output_format: string;
-    additional_instructions: string;
-    generated_markdown: string;
+    additional_instructions: string | null;
+    generated_markdown: string | null;
+    created_at: string;
 }
 
 export interface SaveAnalysisResponse {

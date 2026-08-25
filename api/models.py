@@ -59,7 +59,6 @@ class HybridSearchResult(BaseModel):
     published_date: str | None = None
 
     relevance_score: int
-    semantic_score: float
     hybrid_score: float
 
 class HybridSearchResponse(BaseModel):
@@ -120,7 +119,7 @@ class AnalysisCreateRequest(BaseModel):
 
     additional_instructions: str = ""
 
-    generated_markdown: str
+    generated_markdown: str | None = None
 
 class AnalysisSummary(BaseModel):
     id: int
@@ -160,3 +159,14 @@ class DeleteAnalysisResponse(BaseModel):
 class CreateAnalysisResponse(BaseModel):
     analysis_id: int
     message: str
+
+class UserResponse(BaseModel):
+    id: int
+    email: str
+    created_at: datetime
+
+class LoginResponse(BaseModel):
+    message: str
+    access_token: str
+    token_type: str
+    user: UserResponse

@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from ingestion.scheduler import (start_scheduler,stop_scheduler,scheduled_ingestion)
 from fastapi.middleware.cors import CORSMiddleware
 from api.routes import (search_router, papers_router, workspace_router)
+from api.routes.auth import router as auth_router
 from api.routes import analyses
 from contextlib import asynccontextmanager
 
@@ -27,6 +28,7 @@ app.include_router(search_router)
 app.include_router(papers_router)
 app.include_router(workspace_router)
 app.include_router(analyses.router)
+app.include_router(auth_router)
 
 app.add_middleware(CORSMiddleware,
                 allow_origins=["http://localhost:5173","https://research-intelligence-platform-iota.vercel.app",],

@@ -1,15 +1,9 @@
-from api.database import (get_papers_for_embedding,update_embedding_vector,semantic_search_db,)
+from api.database import (get_papers_for_embedding,update_embedding_vector,
+                          semantic_search_db)
 from api.services.search_service import search_papers_service
 from clients.embedding_client import generate_embedding
-import numpy as np
-import json
-import os
 
 model = None
-
-
-def cosine_similarity(a, b):
-    return np.dot(a, b) / (np.linalg.norm(a) *np.linalg.norm(b))
 
 def create_paper_embedding(title, abstract):
     text = f"{title} {abstract}"
@@ -32,32 +26,35 @@ def backfill_embeddings():
         except Exception as e:
             print(f"Failed {arxiv_id}: {e}")
 
-
-def semantic_search(query,limit=10):
+def semantic_search(query,limit=10,category=None,author=None,year=None,):
     """
-    Perform semantic search using pgvector cosine similarity.
-    Returns the top matching papers.
-
+    Perform semantic search using pgvector.
     """
+
     query_embedding = generate_embedding(query)
-    results = semantic_search_db(query_embedding,limit)
 
+    results = semantic_search_db(
+        query_embedding=query_embedding,
+        limit=limit,
+        category=category,
+        author=author,
+        year=year,
+    )
 
     return [
-        {"arxiv_id": row[0],
-         "title": row[1],
-         "authors": row[2],
-         "categories": row[3],
-         "published_date": str(row[4]),
-         "relevance_score": row[5],
-         "similarity": float(row[6]),
-         }
+        {
+            "arxiv_id": row[0],
+            "title": row[1],
+            "authors": row[2],
+            "categories": row[3],
+            "published_date": str(row[4]),
+            "relevance_score": row[5],
+            "similarity": float(row[6]),
+        }
         for row in results
     ]
 
 def hybrid_search(q,page=1,limit=10,category=None,author=None,year=None,sort="relevance",):
-
-    from api.services.search_service import search_papers_service
 
     """
     Combine keyword and semantic search results
@@ -81,10 +78,8 @@ def hybrid_search(q,page=1,limit=10,category=None,author=None,year=None,sort="re
 
     # Top semantic matches
     try:
-        semantic_results = semantic_search(
-            q,
-            limit=CANDIDATE_POOL_SIZE,
-        )
+        semantic_results = semantic_search(q,limit=CANDIDATE_POOL_SIZE,category=category,
+                                           author=author,year=year,)
     except Exception as e:
         print(f"Semantic search unavailable: {e}")
         semantic_results = []
