@@ -94,7 +94,6 @@ export interface SaveAnalysisRequest {
     output_format: string;
     additional_instructions: string | null;
     generated_markdown: string | null;
-    created_at: string;
 }
 
 export interface SaveAnalysisResponse {
