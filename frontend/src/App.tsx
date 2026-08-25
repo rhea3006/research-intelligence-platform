@@ -1,8 +1,8 @@
 import './App.css'
-import Login from "./pages/Login";
+import Login from "./pages/LoginPage";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
-import Register from "./pages/Register";
+import Register from "./pages/RegisterPage";
 import HomePage from "./pages/HomePage";
 import PaperDetailsPage from "./pages/PaperDetailsPage";
 import SavedPapersPage from "./pages/SavedPapersPage";
