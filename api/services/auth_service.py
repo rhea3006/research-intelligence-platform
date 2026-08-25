@@ -11,6 +11,8 @@ JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 JWT_ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
+print("JWT SECRET LOADED:", JWT_SECRET_KEY is not None)
+
 
 def hash_password(password: str) -> str:
     return password_hash.hash(password)
@@ -38,10 +40,6 @@ def create_access_token(user_id: int) -> str:
     )
 
 security = HTTPBearer()
-
-JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
-JWT_ALGORITHM = "HS256"
-
 
 def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
