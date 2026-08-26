@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
+from ingestion.scheduler import (start_scheduler, stop_scheduler)
 from api.routes import (search_router, papers_router, workspace_router)
 from api.routes.auth import router as auth_router
 from api.routes import analyses
@@ -9,9 +10,9 @@ from contextlib import asynccontextmanager
 @asynccontextmanager
 async def lifespan(app):
     print("🚀 Starting Research Intelligence Platform...")
-
+    start_scheduler()
     yield
-
+    stop_scheduler()
     print("🛑 Shutting down Research Intelligence Platform...")
 
 app = FastAPI(
