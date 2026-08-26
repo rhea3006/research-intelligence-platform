@@ -27,7 +27,8 @@ app.include_router(analyses.router)
 app.include_router(auth_router)
 
 app.add_middleware(CORSMiddleware,
-                allow_origins=["http://localhost:5173","https://research-intelligence-platform-iota.vercel.app",],
+                allow_origins=["http://localhost:5173",
+                               "https://research-intelligence-platform-5oykoudwo-rhea3.vercel.app",],
                 allow_credentials=True,allow_methods=["*"],allow_headers=["*"],)
 
 @app.get("/") # this is root route, whenever the browser visits a particular url, it sends a HTTP request which is get, it tells to run the function below.

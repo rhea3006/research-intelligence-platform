@@ -8,10 +8,11 @@ import os
 password_hash = PasswordHash.recommended()
 
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+if not JWT_SECRET_KEY:
+    raise RuntimeError("JWT_SECRET_KEY is not configured")
+
 JWT_ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
-
-print("JWT SECRET LOADED:", JWT_SECRET_KEY is not None)
 
 
 def hash_password(password: str) -> str:

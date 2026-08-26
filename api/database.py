@@ -10,7 +10,7 @@ load_dotenv()
 def get_connection():
     database_url = os.getenv("DATABASE_URL")
 
-    print(f"Connecting to DB: {database_url is not None}")
+    
 
     conn = psycopg2.connect(database_url)
 

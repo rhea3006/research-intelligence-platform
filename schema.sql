@@ -1,92 +1,87 @@
---
--- PostgreSQL database dump
---
+-- ============================================================
+-- Research Intelligence Platform
+-- Database Schema
+-- ============================================================
 
--- Dumped from database version 17.10 (Homebrew)
--- Dumped by pg_dump version 17.10 (Homebrew)
+CREATE EXTENSION IF NOT EXISTS vector;
 
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET transaction_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
 
-SET default_tablespace = '';
+-- ============================================================
+-- USERS
+-- ============================================================
 
-SET default_table_access_method = heap;
+CREATE TABLE users (
+    id INTEGER NOT NULL,
+    email VARCHAR NOT NULL,
+    password_hash TEXT NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE,
 
---
--- Name: papers; Type: TABLE; Schema: public; Owner: rheamathur
---
-
-CREATE TABLE public.papers (
-    id integer NOT NULL,
-    arxiv_id character varying(50),
-    title text,
-    abstract text,
-    published_date date,
-    authors text,
-    categories text,
-    arxiv_url text,
-    updated_date date,
-    embedding text
+    CONSTRAINT users_pkey PRIMARY KEY (id),
+    CONSTRAINT users_email_key UNIQUE (email)
 );
 
 
+-- ============================================================
+-- PAPERS
+-- ============================================================
+
+CREATE TABLE papers (
+    id INTEGER NOT NULL,
+    arxiv_id VARCHAR(50),
+    title TEXT,
+    abstract TEXT,
+    published_date DATE,
+    authors TEXT,
+    categories TEXT,
+    arxiv_url TEXT,
+    updated_date DATE,
+    embedding_vector vector,
+
+    CONSTRAINT papers_pkey PRIMARY KEY (id),
+    CONSTRAINT papers_arxiv_id_key UNIQUE (arxiv_id)
+);
 
 
---
--- Name: papers_id_seq; Type: SEQUENCE; Schema: public; Owner: rheamathur
---
+-- ============================================================
+-- ANALYSES
+-- ============================================================
 
-CREATE SEQUENCE public.papers_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+CREATE TABLE analyses (
+    id INTEGER NOT NULL,
+    title VARCHAR NOT NULL,
+    analysis_type VARCHAR NOT NULL,
+    analysis_depth VARCHAR NOT NULL,
+    writing_style VARCHAR NOT NULL,
+    output_format VARCHAR NOT NULL,
+    additional_instructions TEXT,
+    generated_markdown TEXT NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE,
+    user_id INTEGER,
 
+    CONSTRAINT analyses_pkey PRIMARY KEY (id),
 
-
---
--- Name: papers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: rheamathur
---
-
-ALTER SEQUENCE public.papers_id_seq OWNED BY public.papers.id;
-
-
---
--- Name: papers id; Type: DEFAULT; Schema: public; Owner: rheamathur
---
-
-ALTER TABLE ONLY public.papers ALTER COLUMN id SET DEFAULT nextval('public.papers_id_seq'::regclass);
+    CONSTRAINT analyses_user_id_fkey
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+);
 
 
---
--- Name: papers papers_arxiv_id_key; Type: CONSTRAINT; Schema: public; Owner: rheamathur
---
+-- ============================================================
+-- ANALYSIS PAPERS
+-- ============================================================
 
-ALTER TABLE ONLY public.papers
-    ADD CONSTRAINT papers_arxiv_id_key UNIQUE (arxiv_id);
+CREATE TABLE analysis_papers (
+    analysis_id INTEGER NOT NULL,
+    paper_arxiv_id VARCHAR NOT NULL,
 
+    CONSTRAINT analysis_papers_pkey
+        PRIMARY KEY (analysis_id, paper_arxiv_id),
 
---
--- Name: papers papers_pkey; Type: CONSTRAINT; Schema: public; Owner: rheamathur
---
+    CONSTRAINT analysis_papers_analysis_id_fkey
+        FOREIGN KEY (analysis_id)
+        REFERENCES analyses(id),
 
-ALTER TABLE ONLY public.papers
-    ADD CONSTRAINT papers_pkey PRIMARY KEY (id);
-
-
---
--- PostgreSQL database dump complete
---
-
-
+    CONSTRAINT analysis_papers_paper_arxiv_id_fkey
+        FOREIGN KEY (paper_arxiv_id)
+        REFERENCES papers(arxiv_id)
+);
