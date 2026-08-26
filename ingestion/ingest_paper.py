@@ -17,7 +17,9 @@ def fetch_papers(query,start=0,max_results=100,sort_by="submittedDate",sort_orde
         "sortOrder": sort_order,
     }
 
-    response = requests.get(url, params=params)
+    response = requests.get(url,params=params,timeout=30,)
+
+    response.raise_for_status()
 
     feed = feedparser.parse(response.text)
 
@@ -62,43 +64,64 @@ def save_paper(cursor, paper_data):
     )
     return cursor.rowcount
 
-def run_ingestion(query="all:machine learning", max_results=20, verbose=True,):
+def run_ingestion(
+    query="all:machine learning",
+    max_results=20,
+    verbose=True,
+):
     conn = get_connection()
     cursor = conn.cursor()
-    papers = fetch_papers(query=query,max_results=max_results,)
+
     inserted_count = 0
     skipped_count = 0
 
-    for paper in papers:
-        paper_data = extract_paper_data(paper)
-
-        if paper_exists(cursor, paper_data["arxiv_id"]):
-            skipped_count += 1
-
-            if verbose:
-                print(f"Skipped: {paper_data['title']}")
-
-            continue
-
-        paper_data["embedding_vector"] = create_paper_embedding(
-            paper_data["title"],
-            paper_data["abstract"],
+    try:
+        papers = fetch_papers(
+            query=query,
+            max_results=max_results,
         )
 
-        inserted = save_paper(cursor, paper_data)
-    conn.commit()
-    
+        for paper in papers:
+            paper_data = extract_paper_data(paper)
 
-    cursor.close()
-    conn.close()
+            if paper_exists(cursor, paper_data["arxiv_id"]):
+                skipped_count += 1
 
-    return {
-        "inserted": inserted_count,
-        "skipped": skipped_count,
-    }
+                if verbose:
+                    print(f"Skipped: {paper_data['title']}")
+
+                continue
+
+            paper_data["embedding_vector"] = create_paper_embedding(
+                paper_data["title"],
+                paper_data["abstract"],
+            )
+
+            inserted = save_paper(cursor, paper_data)
+            inserted_count += inserted
+
+        conn.commit()
+
+        return {
+            "inserted": inserted_count,
+            "skipped": skipped_count,
+        }
+
+    except Exception:
+        conn.rollback()
+        raise
+
+    finally:
+        cursor.close()
+        conn.close()
 
 def main():
-    run_ingestion()
+    stats= run_ingestion(verbose=True)
+    print(
+        f"✅ Ingestion complete | "
+        f"Inserted: {stats['inserted']} | "
+        f"Skipped: {stats['skipped']}"
+    )
 
 
 if __name__ == "__main__":

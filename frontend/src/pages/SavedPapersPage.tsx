@@ -9,12 +9,12 @@ function SavedPapersPage() {
         <main className="saved-page">
 
             <h1 className="saved-title">
-                ❤️ Saved Papers
+                 Saved Papers
             </h1>
 
             {savedPapers.length === 0 ? (
                 <div className="empty-state">
-                    <h2>📚 No saved papers yet</h2>
+                    <h2> No saved papers yet</h2>
 
                     <p>
                         Save papers while browsing to build your personal reading list.
