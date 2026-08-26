@@ -28,7 +28,7 @@ def start_scheduler():
         scheduler.add_job(
             scheduled_ingestion,
             trigger="interval",
-            seconds=30,
+            hours=12,
             id="paper_ingestion",
             replace_existing=True,
         )
