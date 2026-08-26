@@ -4,21 +4,6 @@ from datetime import datetime
 
 scheduler = None
 
-def ingestion_worker():
-    print("=" * 60)
-    print(f"🚀 Scheduler fired at {datetime.now()}")
-
-    try:
-        stats = run_ingestion(verbose=True)
-
-        print(f"✅ Finished | Inserted: {stats['inserted']} | "
-            f"Skipped: {stats['skipped']}")
-
-    except Exception as e:
-        print(f"❌ Scheduler failed: {e}")
-
-    print("=" * 60)
-
 
 def scheduled_ingestion():
     print("=" * 60)

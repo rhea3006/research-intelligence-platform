@@ -66,7 +66,7 @@ def save_paper(cursor, paper_data):
 
 def run_ingestion(
     query="all:machine learning",
-    max_results=20,
+    max_results=100,
     verbose=True,
 ):
     conn = get_connection()
@@ -98,7 +98,8 @@ def run_ingestion(
             )
 
             inserted = save_paper(cursor, paper_data)
-            inserted_count += inserted
+            if inserted:
+                inserted_count += inserted
 
         conn.commit()
 
