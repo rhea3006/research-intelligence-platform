@@ -9,8 +9,8 @@ import { useRef } from "react";
 import "./AIWorkspacePage.css";
 import { BrainCircuit, FileText, Users, Tags, Sparkles, Bot, Copy,
     LoaderCircle, GitCompare, Target, Search, GraduationCap, Compass,BarChart3,
-    Settings2,ChevronUp,PenTool,ChevronDown, Info,Save,RotateCcw, Trash2, } 
-    from "lucide-react";
+    Settings2,ChevronUp,PenTool,ChevronDown, Info,Save,RotateCcw, Trash2,
+    ArrowLeft } from "lucide-react";
 import MarkdownRenderer from "../components/MarkdownRenderer/MarkdownRenderer";
 import SaveAnalysisModal from "../components/SaveAnalysisModal";
 import QuickPromptCard from "../components/QuickPromptCard";
@@ -196,6 +196,13 @@ function AIWorkspacePage() {
 
     return (
         <main className="workspace-page">
+            <button
+                className="back-button"
+                onClick={() => window.history.back()}
+            >
+                <ArrowLeft size={18} />
+                <span>Back</span>
+            </button>
             <section className="workspace-header">
                 <h1 className="workspace-heading">
                     <BrainCircuit size={40} />
@@ -250,20 +257,24 @@ function AIWorkspacePage() {
                                 {selectedCount} of {workspacePapers.length} selected
                             </p>
                         </div>
-                        <button
-                            className="reset-analysis-btn"
-                            onClick={handleResetAnalysis}
-                        >
-                            <RotateCcw size={16} />
-                            Reset Analysis
-                        </button>
-                        <button
-                            className="clear-workspace-btn"
-                            onClick={handleClearWorkspace}
-                        >
-                            <Trash2 size={16} />
-                            Clear Workspace
-                        </button>
+
+                        <div className="workspace-actions">
+                            <button
+                                className="clear-workspace-btn"
+                                onClick={handleClearWorkspace}
+                            >
+                                <Trash2 size={16} />
+                                Clear Workspace
+                            </button>
+
+                            <button
+                                className="reset-analysis-btn"
+                                onClick={handleResetAnalysis}
+                            >
+                                <RotateCcw size={16} />
+                                Reset Analysis
+                            </button>
+                        </div>
                     </div>
                     <div className="workspace-paper-list">
                         {workspacePapers.map((paper) => (

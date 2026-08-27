@@ -38,11 +38,19 @@ function App() {
             </Route>
             <Route
               path="/saved"
-              element={<SavedPapersPage />}
+              element={
+                <ProtectedRoute>
+                  <SavedPapersPage />
+                </ProtectedRoute>
+              }
             />
             <Route
                 path="/workspace"
-                element={<AIWorkspacePage />}
+                element={
+                  <ProtectedRoute>
+                    <AIWorkspacePage />
+                  </ProtectedRoute>
+                }
             />
             <Route
                 path="/analyses"

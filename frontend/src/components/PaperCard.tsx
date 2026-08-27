@@ -1,6 +1,7 @@
 import "./PaperCard.css";
 import type { Paper } from "../types/paper";
 import { Link } from "react-router-dom";
+import { useAuth } from "../auth/Authcontext";
 import { useSavedPapers } from "../context/SavedPapersContext";
 import { useWorkspace } from "../context/WorkspaceContext";
 import {Users,CalendarDays,Heart,FolderPlus,FolderCheck,ArrowRight,} from "lucide-react";
@@ -25,8 +26,15 @@ function PaperCard({ paper }: PaperCardProps) {
 
   const inWorkspace = isPaperSelected(paper.arxiv_id);
   const isSaved = isPaperSaved(paper.arxiv_id);
+  const { isAuthenticated } = useAuth();
 
   const handleSave = async () => {
+
+    if (!isAuthenticated) {
+        alert("Please log in to save papers.");
+        return;
+    }
+
     try {
         if (isSaved) {
             await removePaper(paper.arxiv_id);
@@ -38,13 +46,19 @@ function PaperCard({ paper }: PaperCardProps) {
     }
 };
 
-  const handleWorkspace = () => {
-        if (inWorkspace) {
-            removeWorkspacePaper(paper.arxiv_id);
-        } else {
-            addPaper(paper);
-        }
-    };
+const handleWorkspace = () => {
+
+    if (!isAuthenticated) {
+        alert("Please log in to use the AI Workspace.");
+        return;
+    }
+
+    if (inWorkspace) {
+        removeWorkspacePaper(paper.arxiv_id);
+    } else {
+        addPaper(paper);
+    }
+};
 
   const formattedDate = paper.published_date
     ? new Date(paper.published_date).toLocaleDateString("en-US", {
@@ -53,6 +67,7 @@ function PaperCard({ paper }: PaperCardProps) {
         day: "numeric",
         })
     : "Unknown";
+
 
   return (
     <div className="paper-card">
