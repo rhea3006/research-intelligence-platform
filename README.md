@@ -20,6 +20,49 @@ The production application is deployed with the frontend hosted on Vercel and th
 
 ---
 
+## 📸 Screenshots
+
+### Landing Page
+
+A clean research-focused interface designed around fast paper discovery.
+
+![RIP Landing Page](docs/screenshots/landing.png)
+
+### Research Discovery
+
+Search for research papers using hybrid lexical and semantic retrieval, with filtering, sorting, and pagination.
+
+![Research Discovery](docs/screenshots/search.png)
+
+### Paper Details
+
+Inspect individual papers, including their metadata, abstract, authors, categories, publication information, and source link.
+
+![Paper Details](docs/screenshots/paper_details.png)
+
+### AI Workspace
+
+Build an AI-assisted research workflow by selecting papers and configuring the desired analysis.
+
+![AI Workspace - Paper Selection](docs/screenshots/workspace1.png)
+
+Configure the analysis using different analysis types, depths, writing styles, output formats, and additional instructions.
+
+![AI Workspace - Analysis Configuration](docs/screenshots/workspace2.png)
+
+Generate and review the resulting AI-powered research analysis directly within the workspace.
+
+![AI Workspace - Generated Analysis](docs/screenshots/workspace3.png)
+
+### My Analyses
+
+Access and manage previously saved AI-generated research analyses.
+
+![My Analyses](docs/screenshots/my_analyses.png)
+
+
+---
+
 ## ✨ Features
 
 ### 🔎 Hybrid Research Search
@@ -811,7 +854,7 @@ The production PostgreSQL database is hosted through Neon and provides persisten
 
 The production frontend communicates with the deployed FastAPI backend through the configured API base URL.
 
----
+
 
 ## 🧪 Testing & Verification
 
