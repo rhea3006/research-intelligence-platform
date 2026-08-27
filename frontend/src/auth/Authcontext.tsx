@@ -50,6 +50,18 @@ interface AuthProviderProps {
     children: ReactNode;
 }
 
+function isTokenExpired(token: string): boolean {
+    try {
+        const payload = JSON.parse(
+            atob(token.split(".")[1])
+        );
+
+        return payload.exp * 1000 < Date.now();
+
+    } catch {
+        return true;
+    }
+}
 
 
 export function AuthProvider({
@@ -61,12 +73,17 @@ export function AuthProvider({
         useState<User | null>(null);
 
 
-    const [token, setToken] =
-        useState<string | null>(
-            localStorage.getItem(
-                "access_token"
-            )
-        );
+    const [token, setToken] = useState<string | null>(() => {
+    const storedToken = localStorage.getItem("access_token");
+
+    if (!storedToken || isTokenExpired(storedToken)) {
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("user");
+        return null;
+    }
+
+    return storedToken;
+    });
 
 
 
