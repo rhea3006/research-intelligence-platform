@@ -1,10 +1,8 @@
-from api.database import (save_analysis,get_all_analyses, get_analysis_by_id,
-delete_analysis,)
-from api.services.auth_service import get_current_user
-from fastapi import Depends
+from api.database import (save_analysis,get_all_analyses,
+                          get_analysis_by_id,delete_analysis,)
 
 
-def create_analysis(request,current_user=Depends(get_current_user)):
+def create_analysis(request,current_user):
     """
     Save a generated AI analysis.
     """

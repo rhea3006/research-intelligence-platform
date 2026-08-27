@@ -1,4 +1,4 @@
-import type { SearchResponse } from "../types/paper";
+import type { SearchResponse, Paper } from "../types/paper";
 import axios from "axios";
 
 const API_BASE = axios.create({
@@ -147,5 +147,32 @@ export const getAnalysis = async (
 
 export const deleteAnalysis = async (id: number) => {
     const response = await API_BASE.delete(`/analyses/${id}`);
+    return response.data;
+};
+
+export const getSavedPapers = async (): Promise<Paper[]> => {
+    const response = await API_BASE.get("/saved-papers");
+    return response.data;
+};
+
+
+export const savePaperForUser = async (
+    arxivId: string
+) => {
+    const response = await API_BASE.post(
+        `/saved-papers/${arxivId}`
+    );
+
+    return response.data;
+};
+
+
+export const removeSavedPaper = async (
+    arxivId: string
+) => {
+    const response = await API_BASE.delete(
+        `/saved-papers/${arxivId}`
+    );
+
     return response.data;
 };

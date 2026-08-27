@@ -14,12 +14,19 @@ function MyAnalysesPage() {
     const [selectedAnalysis, setSelectedAnalysis] =useState<Analysis | null>(null);
 
     
+    const [error, setError] = useState("");
+
     const loadAnalyses = async () => {
         try {
+            setError("");
+
             const data = await getAnalyses();
+
             setAnalyses(data);
+
         } catch (error) {
             console.error("Failed to load analyses:", error);
+            setError("Failed to load your saved analyses.");
         } finally {
             setLoading(false);
         }
@@ -55,6 +62,11 @@ function MyAnalysesPage() {
                 <p>
                     Review, manage and export your saved AI-generated reports.
                 </p>
+                {error && (
+                    <div className="error-banner">
+                        {error}
+                    </div>
+                )}
             </div>
             <div className="analyses-layout">
                 <AnalysisSidebar 

@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 from ingestion.scheduler import (start_scheduler, stop_scheduler)
+from api.routes.saved_papers import router as saved_papers_router
 from api.routes import (search_router, papers_router, workspace_router)
 from api.routes.auth import router as auth_router
 from api.routes import analyses
@@ -25,6 +26,7 @@ app.include_router(papers_router)
 app.include_router(workspace_router)
 app.include_router(analyses.router)
 app.include_router(auth_router)
+app.include_router(saved_papers_router)
 
 app.add_middleware(CORSMiddleware,
                 allow_origins=["http://localhost:5173",

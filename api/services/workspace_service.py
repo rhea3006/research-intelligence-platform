@@ -4,7 +4,8 @@ from api.models import (WorkspaceAnalysisRequest,WorkspaceAnalysisResponse,Works
 from api.services.ai_service import (build_prompt,build_summary_prompt)
 
 
-def analyze_workspace_service(request: WorkspaceAnalysisRequest,):
+def analyze_workspace_service(request: WorkspaceAnalysisRequest,
+                              current_user: int,):
     papers = get_workspace_papers(request.paper_ids)
     workspace_papers = []
 
@@ -39,7 +40,7 @@ def analyze_workspace_service(request: WorkspaceAnalysisRequest,):
 
     return WorkspaceAnalysisResponse(analysis=analysis,)
 
-def summarize_paper_service(arxiv_id: str):
+def summarize_paper_service(arxiv_id: str, current_user: int,):
     paper = get_paper_by_id(arxiv_id)
 
     if not paper:

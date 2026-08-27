@@ -26,13 +26,18 @@ function PaperCard({ paper }: PaperCardProps) {
   const inWorkspace = isPaperSelected(paper.arxiv_id);
   const isSaved = isPaperSaved(paper.arxiv_id);
 
-  const handleSave = () => {
-    if (isSaved) {
-      removePaper(paper.arxiv_id);
-    } else {
-      savePaper(paper);
+  const handleSave = async () => {
+    try {
+        if (isSaved) {
+            await removePaper(paper.arxiv_id);
+        } else {
+            await savePaper(paper);
+        }
+    } catch (error) {
+        console.error("Failed to update saved paper:", error);
     }
-  };
+};
+
   const handleWorkspace = () => {
         if (inWorkspace) {
             removeWorkspacePaper(paper.arxiv_id);

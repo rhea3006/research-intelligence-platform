@@ -6,18 +6,14 @@ import os
 
 load_dotenv()
 
-
 def get_connection():
     database_url = os.getenv("DATABASE_URL")
-
-    
-
     conn = psycopg2.connect(database_url)
-
     register_vector(conn)
-
     return conn
 
+
+# Papers table 
 def get_all_papers(limit,offset):
     conn=get_connection()
     cursor=conn.cursor()
@@ -33,7 +29,6 @@ def get_paper_by_id(arxiv_id):
     conn= get_connection()
     cursor= conn.cursor()
     cursor.execute(""" SELECT * FROM papers WHERE arxiv_id = %s""",(arxiv_id,))
-    
     paper=cursor.fetchone()
 
     if paper is None:
@@ -73,7 +68,7 @@ def search_papers(q, limit, offset, category= None, author= None, year= None,
             ELSE 0
         END
         +
-         CASE
+        CASE
             WHEN abstract ILIKE %s THEN 3
             ELSE 0
         END
@@ -497,6 +492,100 @@ def delete_analysis(analysis_id,user_id):
             raise HTTPException(status_code=404,detail="Analysis not found")
 
         return {"message": "Analysis deleted successfully"}
+
+    except Exception:
+        conn.rollback()
+        raise
+
+    finally:
+        cursor.close()
+        conn.close()
+
+# Saved Papers table 
+
+def get_saved_papers(user_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute(
+            """
+            SELECT
+                p.arxiv_id,
+                p.title,
+                p.abstract,
+                p.authors,
+                p.categories,
+                p.published_date
+            FROM saved_papers sp
+            JOIN papers p
+                ON sp.paper_arxiv_id = p.arxiv_id
+            WHERE sp.user_id = %s
+            ORDER BY sp.created_at DESC
+            """,
+            (user_id,),
+        )
+
+        rows = cursor.fetchall()
+
+        return [
+            {
+                "arxiv_id": row[0],
+                "title": row[1],
+                "abstract": row[2],
+                "authors": row[3],
+                "categories": row[4],
+                "published_date": row[5],
+            }
+            for row in rows
+        ]
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def save_paper_for_user(user_id, arxiv_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute(
+            """
+            INSERT INTO saved_papers (user_id, paper_arxiv_id)
+            VALUES (%s, %s)
+            ON CONFLICT (user_id, paper_arxiv_id)
+            DO NOTHING
+            """,
+            (user_id, arxiv_id),
+        )
+
+        conn.commit()
+
+    except Exception:
+        conn.rollback()
+        raise
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def remove_saved_paper(user_id, arxiv_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute(
+            """
+            DELETE FROM saved_papers
+            WHERE user_id = %s
+            AND paper_arxiv_id = %s
+            """,
+            (user_id, arxiv_id),
+        )
+
+        conn.commit()
 
     except Exception:
         conn.rollback()
