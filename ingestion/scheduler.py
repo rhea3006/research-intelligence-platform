@@ -13,7 +13,9 @@ def scheduled_ingestion():
         stats = run_ingestion(verbose=True)
 
         print(
-            f"Inserted: {stats['inserted']}"
+            f"Inserted: {stats['inserted']} | "
+            f"Skipped: {stats['skipped']} | "
+            f"Failed: {stats['failed']}"
         )
 
     except Exception as e:
@@ -31,6 +33,9 @@ def start_scheduler():
             hours=12,
             id="paper_ingestion",
             replace_existing=True,
+            max_instances=1,
+            coalesce=True,
+            misfire_grace_time=300,
         )
 
     if not scheduler.running:

@@ -11,27 +11,85 @@ def create_paper_embedding(title, abstract):
     return generate_embedding(text)
 
 def backfill_embeddings():
+    """
+    Generate embeddings for papers that do not yet have one.
+
+    Embeddings are generated sequentially to avoid overwhelming
+    the inference service.
+    """
 
     papers = get_papers_for_embedding()
-    print(f"Found {len(papers)} papers")
 
-    for paper in papers:
+    print(f"Found {len(papers)} papers requiring embeddings")
+
+    if not papers:
+        print("No papers require embedding.")
+        return
+
+    successful = 0
+    failed = 0
+
+    for index, paper in enumerate(papers, start=1):
+
         arxiv_id, title, abstract = paper
 
+        print(
+            f"[{index}/{len(papers)}] "
+            f"Processing {arxiv_id}"
+        )
+
         try:
-            embedding = create_paper_embedding(title, abstract)
-            update_embedding_vector(arxiv_id, embedding)
-            print(f"Embedded {arxiv_id}")
+
+            embedding = create_paper_embedding(
+                title,
+                abstract or "",
+            )
+
+            update_embedding_vector(
+                arxiv_id,
+                embedding,
+            )
+
+            successful += 1
+
+            print(
+                f"✅ Embedded {arxiv_id} "
+                f"({len(embedding)} dimensions)"
+            )
 
         except Exception as e:
-            print(f"Failed {arxiv_id}: {e}")
 
-def semantic_search(query,limit=10,category=None,author=None,year=None,):
+            failed += 1
+
+            print(
+                f"❌ Failed {arxiv_id}: {e}"
+            )
+
+    print(
+        f"Embedding backfill complete: "
+        f"{successful} successful, "
+        f"{failed} failed."
+    )
+
+def semantic_search(
+    query,
+    limit=10,
+    category=None,
+    author=None,
+    year=None,
+):
     """
     Perform semantic search using pgvector.
     """
 
-    query_embedding = generate_embedding(query)
+    try:
+        query_embedding = generate_embedding(query)
+
+    except Exception as e:
+        print(f"Semantic embedding generation failed: {e}")
+        raise RuntimeError(
+            "Semantic search is temporarily unavailable."
+        ) from e
 
     results = semantic_search_db(
         query_embedding=query_embedding,

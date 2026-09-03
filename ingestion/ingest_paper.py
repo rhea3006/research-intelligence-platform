@@ -1,10 +1,10 @@
+import time
 import requests
 import feedparser
-import psycopg2
 from api.database import get_connection,paper_exists
-from pgvector.psycopg2 import register_vector
 from api.services.embedding_service import create_paper_embedding
 
+EMBEDDING_DELAY_SECONDS = 1
 
 def fetch_papers(query,start=0,max_results=100,sort_by="submittedDate",sort_order="descending",):
     url = "https://export.arxiv.org/api/query"
@@ -74,6 +74,7 @@ def run_ingestion(
 
     inserted_count = 0
     skipped_count = 0
+    failed_count = 0
 
     try:
         papers = fetch_papers(
@@ -92,20 +93,50 @@ def run_ingestion(
 
                 continue
 
-            paper_data["embedding_vector"] = create_paper_embedding(
-                paper_data["title"],
-                paper_data["abstract"],
-            )
+            try:
+                paper_data["embedding_vector"] = create_paper_embedding(
+                    paper_data["title"],
+                    paper_data["abstract"],
+                )
 
-            inserted = save_paper(cursor, paper_data)
-            if inserted:
-                inserted_count += inserted
+                inserted = save_paper(cursor, paper_data)
 
-        conn.commit()
+                if inserted:
+                    inserted_count += inserted
+
+                    # Commit this paper immediately so a later failure
+                    # does not roll back successful ingestion.
+                    conn.commit()
+
+                    if verbose:
+                        print(
+                            f"✅ Embedded and saved: "
+                            f"{paper_data['arxiv_id']}"
+                        )
+
+                        print(
+                            f"Waiting {EMBEDDING_DELAY_SECONDS}s "
+                            "before next embedding..."
+                        )
+
+                    time.sleep(EMBEDDING_DELAY_SECONDS)
+
+            except Exception as e:
+                failed_count += 1
+
+                print(
+                    f"❌ Failed to ingest "
+                    f"{paper_data['arxiv_id']}: {e}"
+                )
+
+                conn.rollback()
+
+                continue
 
         return {
             "inserted": inserted_count,
             "skipped": skipped_count,
+            "failed": failed_count,
         }
 
     except Exception:
@@ -121,7 +152,8 @@ def main():
     print(
         f"✅ Ingestion complete | "
         f"Inserted: {stats['inserted']} | "
-        f"Skipped: {stats['skipped']}"
+        f"Skipped: {stats['skipped']} | "
+        f"Failed: {stats['failed']}"
     )
 
 
