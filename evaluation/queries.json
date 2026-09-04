@@ -1,0 +1,14 @@
+{
+  "queries": [
+    "transformers",
+    "graph neural networks",
+    "computer vision",
+    "medical diagnosis",
+    "time series forecasting",
+    "retrieval augmented generation",
+    "large language models",
+    "robotics",
+    "reinforcement learning",
+    "anomaly detection"
+  ]
+}

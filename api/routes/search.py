@@ -5,10 +5,16 @@ from api.services.embedding_service import (semantic_search,hybrid_search,)
 router = APIRouter()
 
 @router.get("/search", response_model=SearchResponse)
-def search(q: str, category: str | None = None, author: str | None = None ,year: int | None = None,
-           sort: str = "relevance",page: int=1, limit: int=10):
-    
-    return hybrid_search(
+def search(
+    q: str,
+    category: str | None = None,
+    author: str | None = None,
+    year: int | None = None,
+    sort: str = "relevance",
+    page: int = 1,
+    limit: int = 10,
+):
+    return search_papers_service(
         q=q,
         page=page,
         limit=limit,
@@ -18,9 +24,8 @@ def search(q: str, category: str | None = None, author: str | None = None ,year:
         sort=sort,
     )
 
-@router.get("/semantic-search")
-def semantic_search_endpoint(q: str,response_model=list[SemanticSearchResult]):
-
+@router.get( "/semantic-search",response_model=list[SemanticSearchResult],)
+def semantic_search_endpoint(q: str):
     return semantic_search(q)
 
 @router.get("/hybrid-search",response_model=HybridSearchResponse)
