@@ -595,4 +595,101 @@ def remove_saved_paper(user_id, arxiv_id):
         cursor.close()
         conn.close()
 
+def insert_paper_chunks(arxiv_id, chunks):
+    """
+    Insert paper chunks into PostgreSQL.
+
+    `chunks` should contain dictionaries with:
+        - section
+        - chunk_index
+        - text
+    """
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+        for chunk in chunks:
+            cursor.execute(
+                """
+                INSERT INTO paper_chunks (
+                    arxiv_id,
+                    chunk_index,
+                    section,
+                    text
+                )
+                VALUES (%s, %s, %s, %s)
+                ON CONFLICT (arxiv_id, chunk_index)
+                DO UPDATE SET
+                    section = EXCLUDED.section,
+                    text = EXCLUDED.text
+                """,
+                (
+                    arxiv_id,
+                    chunk["chunk_index"],
+                    chunk["section"],
+                    chunk["text"],
+                ),
+            )
+
+        conn.commit()
+
+    except Exception:
+        conn.rollback()
+        raise
+
+    finally:
+        cursor.close()
+        conn.close()
+
+def insert_paper_chunks(arxiv_id, chunks):
+    """
+    Insert or update chunks for a paper.
+
+    Each chunk contains:
+        - chunk_index
+        - section_chunk_index
+        - section
+        - text
+    """
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+        for chunk in chunks:
+            cursor.execute(
+                """
+                INSERT INTO paper_chunks (
+                    arxiv_id,
+                    chunk_index,
+                    section_chunk_index,
+                    section,
+                    text
+                )
+                VALUES (%s, %s, %s, %s, %s)
+                ON CONFLICT (arxiv_id, chunk_index)
+                DO UPDATE SET
+                    section_chunk_index = EXCLUDED.section_chunk_index,
+                    section = EXCLUDED.section,
+                    text = EXCLUDED.text
+                """,
+                (
+                    arxiv_id,
+                    chunk["chunk_index"],
+                    chunk["section_chunk_index"],
+                    chunk["section"],
+                    chunk["text"],
+                ),
+            )
+
+        conn.commit()
+
+    except Exception:
+        conn.rollback()
+        raise
+
+    finally:
+        cursor.close()
+        conn.close()
     
