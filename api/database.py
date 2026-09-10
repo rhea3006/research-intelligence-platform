@@ -692,4 +692,150 @@ def insert_paper_chunks(arxiv_id, chunks):
     finally:
         cursor.close()
         conn.close()
+
+def get_chunks_for_embedding(arxiv_id=None):
+    """
+    Return paper chunks that do not have embeddings yet.
+
+    If arxiv_id is provided, only chunks from that paper are returned.
+    """
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+        if arxiv_id:
+            cursor.execute(
+                """
+                SELECT
+                    id,
+                    arxiv_id,
+                    chunk_index,
+                    text
+                FROM paper_chunks
+                WHERE arxiv_id = %s
+                  AND embedding_vector IS NULL
+                ORDER BY chunk_index
+                """,
+                (arxiv_id,),
+            )
+        else:
+            cursor.execute(
+                """
+                SELECT
+                    id,
+                    arxiv_id,
+                    chunk_index,
+                    text
+                FROM paper_chunks
+                WHERE embedding_vector IS NULL
+                ORDER BY arxiv_id, chunk_index
+                """
+            )
+
+        return cursor.fetchall()
+
+    finally:
+        cursor.close()
+        conn.close()
+
+def update_chunk_embedding(chunk_id, embedding):
+    """
+    Store the embedding vector for a paper chunk.
+    """
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute(
+            """
+            UPDATE paper_chunks
+            SET embedding_vector = %s
+            WHERE id = %s
+            """,
+            (embedding, chunk_id),
+        )
+
+        conn.commit()
+
+    except Exception:
+        conn.rollback()
+        raise
+
+    finally:
+        cursor.close()
+        conn.close()
+
+def semantic_chunk_search(
+    query_embedding,
+    limit=5,
+    arxiv_id=None,
+):
+    """
+    Retrieve the most semantically similar paper chunks.
+    """
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+        if arxiv_id:
+            cursor.execute(
+                """
+                SELECT
+                    id,
+                    arxiv_id,
+                    chunk_index,
+                    section_chunk_index,
+                    section,
+                    text,
+                    1 - (
+                        embedding_vector <=> %s::vector
+                    ) AS similarity
+                FROM paper_chunks
+                WHERE embedding_vector IS NOT NULL
+                  AND arxiv_id = %s
+                ORDER BY embedding_vector <=> %s::vector
+                LIMIT %s
+                """,
+                (
+                    query_embedding,
+                    arxiv_id,
+                    query_embedding,
+                    limit,
+                ),
+            )
+        else:
+            cursor.execute(
+                """
+                SELECT
+                    id,
+                    arxiv_id,
+                    chunk_index,
+                    section_chunk_index,
+                    section,
+                    text,
+                    1 - (
+                        embedding_vector <=> %s::vector
+                    ) AS similarity
+                FROM paper_chunks
+                WHERE embedding_vector IS NOT NULL
+                ORDER BY embedding_vector <=> %s::vector
+                LIMIT %s
+                """,
+                (
+                    query_embedding,
+                    query_embedding,
+                    limit,
+                ),
+            )
+
+        return cursor.fetchall()
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
     

@@ -170,3 +170,13 @@ class LoginResponse(BaseModel):
     access_token: str
     token_type: str
     user: UserResponse
+
+class ChunkRetrievalResult(BaseModel):
+    chunk_id: int
+    arxiv_id: str
+    chunk_index: int
+    section_chunk_index: int
+    section: str
+    text: str
+    similarity: float
+

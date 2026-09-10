@@ -1,7 +1,8 @@
 from api.database import (get_papers_for_embedding,update_embedding_vector,
-                          semantic_search_db)
+                          semantic_search_db,)
 from api.services.search_service import search_papers_service
 from clients.embedding_client import generate_embedding
+
 
 model = None
 
@@ -198,6 +199,7 @@ def hybrid_search(q,page=1,limit=10,category=None,author=None,year=None,sort="re
         "total": len(results),
         "total_pages": (len(results) + limit - 1) // limit,
     }
+
 
 
 if __name__ == "__main__":
